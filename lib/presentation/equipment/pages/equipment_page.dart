@@ -1,5 +1,8 @@
+import 'package:barangay_adittion_hills_app/common/services/database_service.dart';
 import 'package:barangay_adittion_hills_app/common/widgets/column_field_text.dart';
 import 'package:barangay_adittion_hills_app/common/widgets/common_widgets.dart';
+import 'package:barangay_adittion_hills_app/models/equipment/new_equipment.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -17,7 +20,8 @@ class EventEquipmentPage extends StatefulWidget {
 class _EventEquipmentPageState extends State<EventEquipmentPage> {
   final List<TextEditingController> listControllers = [TextEditingController()];
   final List<String> listRequirements = <String>[""];
-
+  Color reqBorder = Color(0xfffffff);
+  final DatabaseService _databaseService = DatabaseService();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,117 +102,148 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                         ),
                       ),
                     ),
-                    SingleChildScrollView(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        height: 200,
-                        width: double.infinity,
-                        decoration: const BoxDecoration(),
-                        child: ListView.builder(
-                            itemCount: 2,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Container(
-                                decoration: const BoxDecoration(
-                                  border: Border(
-                                      bottom: BorderSide(
-                                          width: 0.5,
-                                          color: Color(0xffE6E6E6))),
-                                  // color: (index.isEven)
-                                  //     ? Colors.white
-                                  //     : Color(0xffFAFAFA),
-                                ),
-                                child: ListTile(
-                                  titleAlignment: ListTileTitleAlignment.center,
-                                  title: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      // Item
-                                      Expanded(
-                                        child: Text(
-                                          'Chairs',
-                                          textAlign: TextAlign.center,
-                                          style: GoogleFonts.poppins(
-                                            textStyle: const TextStyle(
-                                                color: Color(0xff0a0a0a),
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.normal),
-                                          ),
-                                        ),
-                                      ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      height: 400,
+                      width: double.infinity,
+                      child: StreamBuilder(
+                          stream: _databaseService.getItems(),
+                          builder: (context, snapshot) {
+                            List equipment = snapshot.data?.docs ?? [];
+                            debugPrint(_databaseService.getItems().toString());
 
-                                      // Quantity
-                                      Expanded(
-                                        child: Text(
-                                          'Chairs',
-                                          textAlign: TextAlign.center,
-                                          style: GoogleFonts.poppins(
-                                            textStyle: const TextStyle(
-                                                color: Color(0xff0a0a0a),
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.normal),
-                                          ),
-                                        ),
-                                      ),
-
-                                      // Available
-                                      Expanded(
-                                        child: Text(
-                                          'Chairs',
-                                          textAlign: TextAlign.center,
-                                          style: GoogleFonts.poppins(
-                                            textStyle: const TextStyle(
-                                                color: Color(0xff0a0a0a),
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.normal),
-                                          ),
-                                        ),
-                                      ),
-
-                                      // In Use
-                                      Expanded(
-                                        child: Text(
-                                          'Chairs',
-                                          textAlign: TextAlign.center,
-                                          style: GoogleFonts.poppins(
-                                            textStyle: const TextStyle(
-                                                color: Color(0xff0a0a0a),
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.normal),
-                                          ),
-                                        ),
-                                      ),
-
-                                      // Actions
-                                      Expanded(
-                                          child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          actionButton(
-                                              const Icon(
-                                                  Icons.visibility_rounded),
-                                              () {
-                                            viewItem(context);
-                                          }, const Color(0xffd1a6ff), 'View'),
-                                          actionButton(
-                                              const Icon(Icons.edit_rounded),
-                                              () {
-                                            editItem(context);
-                                          }, const Color(0xffa5de97), 'Edit'),
-                                          actionButton(
-                                              const Icon(Icons.delete_rounded),
-                                              () {
-                                            deleteItem(context);
-                                          }, const Color(0xfffc9583), 'Delete')
-                                        ],
-                                      ))
-                                    ],
-                                  ),
-                                ),
+                            if (equipment.isEmpty) {
+                              return const Center(
+                                child: Text('Empty'),
                               );
-                            }),
-                      ),
+                            }
+                            debugPrint(
+                                "item count: ${equipment.length.toString()}");
+                            return ListView.builder(
+                                itemCount: equipment.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  NewEquipment newEquipment =
+                                      equipment[index].data();
+                                  String equipmentId = equipment[index].id;
+                                  debugPrint(equipmentId);
+
+                                  return Container(
+                                    decoration: const BoxDecoration(
+                                      border: Border(
+                                          bottom: BorderSide(
+                                              width: 0.5,
+                                              color: Color(0xffE6E6E6))),
+                                    ),
+                                    child: ListTile(
+                                      titleAlignment:
+                                          ListTileTitleAlignment.center,
+                                      title: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          // Item
+                                          Expanded(
+                                            child: Text(
+                                              newEquipment.itemName,
+                                              textAlign: TextAlign.center,
+                                              style: GoogleFonts.poppins(
+                                                textStyle: const TextStyle(
+                                                    color: Color(0xff0a0a0a),
+                                                    fontSize: 12,
+                                                    fontWeight:
+                                                        FontWeight.normal),
+                                              ),
+                                            ),
+                                          ),
+
+                                          // Quantity
+                                          Expanded(
+                                            child: Text(
+                                              newEquipment.itemQuantity
+                                                  .toString(),
+                                              textAlign: TextAlign.center,
+                                              style: GoogleFonts.poppins(
+                                                textStyle: const TextStyle(
+                                                    color: Color(0xff0a0a0a),
+                                                    fontSize: 12,
+                                                    fontWeight:
+                                                        FontWeight.normal),
+                                              ),
+                                            ),
+                                          ),
+
+                                          // Available
+                                          Expanded(
+                                            child: Text(
+                                              '0',
+                                              textAlign: TextAlign.center,
+                                              style: GoogleFonts.poppins(
+                                                textStyle: const TextStyle(
+                                                    color: Color(0xff0a0a0a),
+                                                    fontSize: 12,
+                                                    fontWeight:
+                                                        FontWeight.normal),
+                                              ),
+                                            ),
+                                          ),
+
+                                          // In Use
+                                          Expanded(
+                                            child: Text(
+                                              '0',
+                                              textAlign: TextAlign.center,
+                                              style: GoogleFonts.poppins(
+                                                textStyle: const TextStyle(
+                                                    color: Color(0xff0a0a0a),
+                                                    fontSize: 12,
+                                                    fontWeight:
+                                                        FontWeight.normal),
+                                              ),
+                                            ),
+                                          ),
+
+                                          // Actions
+                                          Expanded(
+                                              child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              actionButton(
+                                                  const Icon(
+                                                      Icons.visibility_rounded),
+                                                  () {
+                                                // VIEW BUTTON
+
+                                                viewItem(context, newEquipment);
+                                              }, const Color(0xffd1a6ff),
+                                                  'View'),
+                                              actionButton(
+                                                  const Icon(
+                                                      Icons.edit_rounded), () {
+                                                // EDIT BUTTON
+
+                                                editItem(context, equipmentId,
+                                                    newEquipment);
+                                              }, const Color(0xffa5de97),
+                                                  'Edit'),
+                                              actionButton(
+                                                  const Icon(
+                                                      Icons.delete_rounded),
+                                                  () {
+                                                // DELETE BUTTON
+
+                                                deleteItem(
+                                                    context, equipmentId);
+                                              }, const Color(0xfffc9583),
+                                                  'Delete')
+                                            ],
+                                          ))
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                });
+                          }),
                     )
                   ],
                 )),
@@ -238,7 +273,14 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
   }
 
   void addNewItem(BuildContext context) {
+    TextEditingController addItemName = TextEditingController();
+    TextEditingController addItemDescription = TextEditingController();
+    TextEditingController addQuantity = TextEditingController();
+    List<TextEditingController> addItemRequirements = [TextEditingController()];
+
+    Color reqBorder = Colors.transparent;
     showDialog(
+        barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
           return Dialog(
@@ -248,36 +290,40 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
               ),
             ),
             child: StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) {
-              return SizedBox(
-                width: 600,
-                height: 500,
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: Text(
-                            'Add New Item',
-                            style: GoogleFonts.poppins(
+              builder: (BuildContext context, StateSetter setState) {
+                return Container(
+                  width: 600,
+                  height: 500,
+                  decoration: const BoxDecoration(
+                    color: Color(0xffE8E8EA),
+                    borderRadius: BorderRadius.all(Radius.circular(4)),
+                  ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 16),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: Text(
+                              'Add New Item',
+                              style: GoogleFonts.poppins(
                                 textStyle: const TextStyle(
-                                    color: Color(0xff1E1A2A),
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.w500)),
-                            textAlign: TextAlign.left,
+                                  color: Color(0xff1E1A2A),
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(
-                        height: 40,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: Form(
+                        const SizedBox(height: 20),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Form(
                             key: _formKey,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -288,9 +334,10 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                                   child: textFieldLabel('Item Name', 12),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 8),
+                                  padding: const EdgeInsets.only(
+                                      top: 4, left: 8, right: 8, bottom: 24),
                                   child: TextFormField(
+                                    controller: addItemName,
                                     validator: (value) {
                                       if (value!.isEmpty) {
                                         return "Item name cannot be empty!";
@@ -302,18 +349,22 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                                     ],
                                     cursorColor: const Color(0xff1D1929),
                                     style: GoogleFonts.inter(
-                                        textStyle: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.normal,
-                                            color: Color(0xff1E1A2A))),
+                                      textStyle: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.normal,
+                                        color: Color(0xff1E1A2A),
+                                      ),
+                                    ),
                                     decoration: const InputDecoration(
-                                        fillColor: Color(0xffE8E8EA),
-                                        filled: true,
-                                        border: OutlineInputBorder(),
-                                        enabledBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                                color: Color(0xffE8E8EA))),
-                                        focusedBorder: InputBorder.none),
+                                      fillColor: Color(0xfFFFFFFF),
+                                      filled: true,
+                                      border: OutlineInputBorder(),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Color(0xffE8E8EA)),
+                                      ),
+                                      focusedBorder: InputBorder.none,
+                                    ),
                                   ),
                                 ),
                                 Padding(
@@ -321,52 +372,98 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                                       horizontal: 8, vertical: 2),
                                   child: textFieldLabel('Description', 12),
                                 ),
-
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 8, horizontal: 8),
+                                  child: TextFormField(
+                                    controller: addItemDescription,
+                                    maxLines: null,
+                                    keyboardType: TextInputType.multiline,
+                                    style: GoogleFonts.inter(
+                                      textStyle: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.normal,
+                                        color: Color(0xff1E1A2A),
+                                      ),
+                                    ),
+                                    decoration: const InputDecoration(
+                                      fillColor: Color(0xffffffff),
+                                      filled: true,
+                                      contentPadding: EdgeInsets.symmetric(
+                                          vertical: 30, horizontal: 8),
+                                      border: OutlineInputBorder(),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Color(0xffE8E8EA)),
+                                      ),
+                                      focusedBorder: InputBorder.none,
+                                    ),
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return "Description cannot be empty.";
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 8, vertical: 4),
-                                  child: Container(
-                                    padding:
-                                        const EdgeInsetsDirectional.symmetric(
-                                            horizontal: 8, vertical: 0),
-                                    height: 100,
-                                    decoration: const BoxDecoration(
-                                        color: Color(0xffE8E8EA),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(4))),
-                                    child: TextFormField(
-                                      maxLines: null,
-                                      keyboardType: TextInputType.multiline,
-                                      style: GoogleFonts.inter(
-                                          textStyle: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.normal,
-                                              color: Color(0xff1E1A2A))),
-                                      decoration: const InputDecoration(
-                                          enabledBorder: InputBorder.none,
-                                          focusedBorder: InputBorder.none),
+                                  child: textFieldLabel('Quantity', 12),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4),
+                                  child: TextFormField(
+                                    controller: addQuantity,
+                                    inputFormatters: onlyUnsignedNumbers(),
+                                    style: GoogleFonts.inter(
+                                      textStyle: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.normal,
+                                        color: Color(0xff1E1A2A),
+                                      ),
                                     ),
+                                    decoration: const InputDecoration(
+                                      fillColor: Color(0xfFFFFFFF),
+                                      filled: true,
+                                      border: OutlineInputBorder(),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Color(0xffE8E8EA)),
+                                      ),
+                                      focusedBorder: InputBorder.none,
+                                    ),
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return "Quantity field cannot be empty";
+                                      }
+                                      return addQuantity.text;
+                                    },
                                   ),
                                 ),
-
-                                // REQUIREMENTS SECTION
-
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 8, vertical: 4),
                                   child: textFieldLabel('Requirements', 12),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 16),
-                                  child: SizedBox(
+                                  padding: const EdgeInsets.only(
+                                      left: 8, right: 8, top: 4),
+                                  child: Container(
+                                    padding: const EdgeInsetsDirectional.only(
+                                        top: 8),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: reqBorder),
+                                      color: Colors.white,
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(4)),
+                                    ),
                                     height: 150,
                                     child: ListView.builder(
-                                      itemCount: listControllers.length,
+                                      shrinkWrap: true,
+                                      itemCount: addItemRequirements.length,
                                       itemBuilder: (context, index) {
-                                        if (listControllers.isEmpty) {
-                                          return const Text('EMpty.');
-                                        }
                                         return Padding(
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 16, vertical: 8),
@@ -382,19 +479,18 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                                               Expanded(
                                                 flex: 3,
                                                 child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(horizontal: 8),
                                                   decoration:
                                                       const BoxDecoration(
-                                                    color: Color(0xffE8E8EA),
+                                                    color: Color(0xfffafafa),
                                                     borderRadius:
                                                         BorderRadius.all(
-                                                      Radius.circular(4),
-                                                    ),
+                                                            Radius.circular(4)),
                                                   ),
                                                   child: Center(
-                                                    // Centering the TextFormField within the container
                                                     child: TextFormField(
+                                                      controller:
+                                                          addItemRequirements[
+                                                              index],
                                                       style: GoogleFonts.inter(
                                                         textStyle:
                                                             const TextStyle(
@@ -414,19 +510,32 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                                                         suffixIcon: IconButton(
                                                           onPressed: () {
                                                             setState(() {
-                                                              listControllers[
+                                                              addItemRequirements[
                                                                       index]
                                                                   .clear();
-                                                              listControllers[
+                                                              addItemRequirements[
                                                                       index]
                                                                   .dispose();
-                                                              listControllers
+                                                              addItemRequirements
                                                                   .removeAt(
                                                                       index);
+                                                              // Update border color based on listControllers length
+                                                              reqBorder =
+                                                                  addItemRequirements
+                                                                          .isEmpty
+                                                                      ? Colors
+                                                                          .red
+                                                                      : Colors
+                                                                          .grey;
                                                             });
                                                           },
-                                                          icon: const Icon(Icons
-                                                              .delete_rounded),
+                                                          icon: const Icon(
+                                                            Icons
+                                                                .delete_rounded,
+                                                            color: Color(
+                                                                0xff8C8B92),
+                                                            size: 18,
+                                                          ),
                                                         ),
                                                       ),
                                                     ),
@@ -440,30 +549,32 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                                     ),
                                   ),
                                 ),
-
-                                // ADD MORE REQUIREMENT BUTTON
-
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 16, vertical: 16),
                                   child: Container(
-                                      width: double.infinity,
-                                      height: 40,
-                                      child: TextButton(
-                                        style: const ButtonStyle(),
-                                        onPressed: () {
-                                          setState(() {
-                                            listControllers
-                                                .add(TextEditingController());
-                                          });
-                                        },
-                                        child:
-                                            const Text('Add more requirements'),
-                                      )),
+                                    width: double.infinity,
+                                    height: 40,
+                                    child: TextButton(
+                                      style: const ButtonStyle(),
+                                      onPressed: () {
+                                        setState(() {
+                                          addItemRequirements
+                                              .add(TextEditingController());
+                                          debugPrint(addItemRequirements.length
+                                              .toString());
+                                          // Update border color based on listControllers length
+                                          reqBorder =
+                                              addItemRequirements.isEmpty
+                                                  ? Colors.red
+                                                  : Colors.grey;
+                                        });
+                                      },
+                                      child:
+                                          const Text('Add more requirements'),
+                                    ),
+                                  ),
                                 ),
-
-                                // CANCEL BUTTON
-
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 16, vertical: 16),
@@ -472,75 +583,115 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                                       Expanded(
                                         child: InkWell(
                                           onTap: () {
-                                            listControllers.clear();
+                                            addItemRequirements.clear();
                                             Navigator.pop(context);
-                                            listControllers
+                                            addItemRequirements
                                                 .add(TextEditingController());
+                                            // Update border color after clearing list
+                                            reqBorder =
+                                                addItemRequirements.isEmpty
+                                                    ? Colors.red
+                                                    : Colors.grey;
                                           },
                                           child: Container(
                                             alignment: Alignment.center,
                                             width: double.infinity,
                                             height: 40,
                                             decoration: const BoxDecoration(
-                                                color: Color(0xfffb9481),
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(4))),
+                                              color: Color(0xfffb9481),
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(4)),
+                                            ),
                                             child: Text(
                                               'CANCEL',
                                               style: GoogleFonts.poppins(
-                                                  textStyle: const TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w400)),
+                                                textStyle: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-
-                                      // ADD BUTTON
-
+                                      const SizedBox(width: 10),
                                       Expanded(
                                         child: InkWell(
                                           child: Container(
                                             height: 40,
                                             decoration: const BoxDecoration(
-                                                color: Color(0xff73dae3),
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(4))),
+                                              color: Color(0xff73dae3),
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(4)),
+                                            ),
                                             alignment: Alignment.center,
-                                            child: Text('ADD',
-                                                style: GoogleFonts.poppins(
-                                                    textStyle: const TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.w400))),
+                                            child: Text(
+                                              'ADD',
+                                              style: GoogleFonts.poppins(
+                                                textStyle: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w400,
+                                                ),
+                                              ),
+                                            ),
                                           ),
                                           onTap: () {
                                             _formKey.currentState!.validate();
+
+                                            List listControllerValue =
+                                                List.generate(
+                                                    addItemRequirements.length,
+                                                    (index) => "");
+                                            for (var i = 0;
+                                                i < addItemRequirements.length;
+                                                i++) {
+                                              listControllerValue[i] =
+                                                  addItemRequirements[i].text;
+                                            }
+
+                                            NewEquipment addNewEquipment =
+                                                NewEquipment(
+                                                    itemName: addItemName.text,
+                                                    itemDescription:
+                                                        addItemDescription.text,
+                                                    itemQuantity: int.parse(
+                                                        addQuantity.text),
+                                                    itemRequirements:
+                                                        listControllerValue,
+                                                    createdOn: Timestamp.now(),
+                                                    lastUpdatedOn:
+                                                        Timestamp.now());
+                                            _databaseService
+                                                .addItem(addNewEquipment);
+
+                                            addItemName.clear();
+                                            addItemDescription.clear();
+                                            addQuantity.clear();
+                                            addItemRequirements.clear();
+                                            Navigator.pop(context);
                                           },
                                         ),
-                                      )
+                                      ),
                                     ],
                                   ),
                                 ),
                               ],
-                            )),
-                      ),
-                    ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              );
-            }),
+                );
+              },
+            ),
           );
         });
   }
 
-  void deleteItem(BuildContext context) {
+  void deleteItem(BuildContext context, String itemId) {
     showDialog(
         context: context,
         barrierDismissible: false,
@@ -574,7 +725,7 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                   child: const Text('Abort')),
               TextButton(
                   onPressed: () {
-                    // _databaseService.deleteDoc(docsId);
+                    _databaseService.deleteItem(itemId);
                     Navigator.pop(context);
                   },
                   child: const Text('Delete')),
@@ -584,25 +735,47 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
         });
   }
 
-  void viewItem(BuildContext context) {
+  void viewItem(BuildContext context, NewEquipment newEquipment) {
+    List viewRequirements = newEquipment.itemRequirements;
+
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return Dialog(
             shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(4))),
+              borderRadius: BorderRadius.all(Radius.circular(4)),
+            ),
             child: SingleChildScrollView(
               child: Container(
-                height: 500,
-                width: 600,
-                child: const Column(
+                padding:
+                    const EdgeInsets.all(16.0), // Add padding for better UI
+                constraints: const BoxConstraints(
+                    maxHeight: 500,
+                    maxWidth: 600), // Constraints instead of fixed size
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Item Name:'),
-                    Text('Title Name'),
-                    Text('Description:'),
-                    Text('Description....'),
-                    Text('Requirements:')
+                    const Text('Item Name:'),
+                    Text(newEquipment.itemName),
+                    const SizedBox(height: 8), // Add spacing between sections
+                    const Text('Description:'),
+                    Text(newEquipment.itemDescription),
+                    const SizedBox(height: 8),
+                    const Text('Quantity: '),
+                    Text(newEquipment.itemQuantity.toString()),
+                    const SizedBox(height: 8),
+                    const Text('Requirements:'),
+                    Container(
+                      height: 150, // Define a height for ListView
+                      child: ListView.builder(
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            title: Text(viewRequirements[index]),
+                          );
+                        },
+                        itemCount: viewRequirements.length,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -611,7 +784,23 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
         });
   }
 
-  void editItem(BuildContext context) {
+  void editItem(
+      BuildContext context, String equipmentId, NewEquipment newEquip) {
+    List sample = newEquip.itemRequirements;
+    List<TextEditingController> sample2 =
+        List.generate(sample.length, (index) => TextEditingController());
+    // debugPrint(sample2.length.toString());
+    setState(() {
+      for (var i = 0; i < sample.length; i++) {
+        sample2[i].text = newEquip.itemRequirements[i];
+      }
+    });
+    TextEditingController editItemName =
+        TextEditingController(text: newEquip.itemName);
+    TextEditingController editDescription =
+        TextEditingController(text: newEquip.itemDescription);
+    TextEditingController editQuantity =
+        TextEditingController(text: newEquip.itemQuantity.toString());
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -623,85 +812,173 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
             child: StatefulBuilder(
                 builder: (BuildContext context, StateSetter setState) {
               return Container(
-                padding: const EdgeInsets.all(16),
                 width: 600,
+                decoration: BoxDecoration(
+                    color: Color(0xffE8E8EA),
+                    borderRadius: BorderRadius.all(Radius.circular(4))),
                 child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Edit',
-                        style: GoogleFonts.poppins(
-                            textStyle: const TextStyle(
-                                fontSize: 24,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 16),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: Text(
+                            'Edit',
+                            style: GoogleFonts.poppins(
+                              textStyle: const TextStyle(
+                                color: Color(0xff1E1A2A),
+                                fontSize: 22,
                                 fontWeight: FontWeight.w500,
-                                color: Color(0xff0a0a0a))),
+                              ),
+                            ),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
                       ),
                       Form(
+                        key: _formKey,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            textFieldLabel('Item Name', 12),
-                            Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8),
-                              margin: const EdgeInsets.only(bottom: 16),
-                              decoration: const BoxDecoration(
-                                  color: Color(0xffE8E8EA),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(4))),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 2),
+                              child: textFieldLabel('Item Name', 12),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 4, left: 8, right: 8, bottom: 24),
                               child: TextFormField(
+                                controller: editItemName,
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return "Item name cannot be empty!";
+                                  }
+                                  return null;
+                                },
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(42),
+                                ],
+                                cursorColor: const Color(0xff1D1929),
                                 style: GoogleFonts.inter(
-                                    textStyle: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.normal,
-                                        color: Color(0xff1E1A2A))),
+                                  textStyle: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.normal,
+                                    color: Color(0xff1E1A2A),
+                                  ),
+                                ),
                                 decoration: const InputDecoration(
-                                  enabledBorder: InputBorder.none,
+                                  fillColor: Color(0xfFFFFFFF),
+                                  filled: true,
+                                  border: OutlineInputBorder(),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: Color(0xffE8E8EA)),
+                                  ),
                                   focusedBorder: InputBorder.none,
                                 ),
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 2),
                               child: textFieldLabel('Description', 12),
-                            ),
-                            Container(
-                              padding: const EdgeInsetsDirectional.symmetric(
-                                  horizontal: 8, vertical: 0),
-                              height: 125,
-                              decoration: const BoxDecoration(
-                                  color: Color(0xffE8E8EA),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(4))),
-                              child: TextFormField(
-                                maxLines: null,
-                                keyboardType: TextInputType.multiline,
-                                style: GoogleFonts.inter(
-                                    textStyle: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.normal,
-                                        color: Color(0xff1E1A2A))),
-                                decoration: const InputDecoration(
-                                    enabledBorder: InputBorder.none,
-                                    focusedBorder: InputBorder.none),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                              child: textFieldLabel('Requirements', 12),
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 16),
-                              child: SizedBox(
+                                  vertical: 8, horizontal: 8),
+                              child: TextFormField(
+                                controller: editDescription,
+                                maxLines: null,
+                                keyboardType: TextInputType.multiline,
+                                style: GoogleFonts.inter(
+                                  textStyle: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.normal,
+                                    color: Color(0xff1E1A2A),
+                                  ),
+                                ),
+                                decoration: const InputDecoration(
+                                  fillColor: Color(0xffffffff),
+                                  filled: true,
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: 30, horizontal: 8),
+                                  border: OutlineInputBorder(),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: Color(0xffE8E8EA)),
+                                  ),
+                                  focusedBorder: InputBorder.none,
+                                ),
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return "Description cannot be empty.";
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              child: textFieldLabel('Quantity', 12),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              child: TextFormField(
+                                controller: editQuantity,
+                                inputFormatters: onlyUnsignedNumbers(),
+                                keyboardType: TextInputType.number,
+                                style: GoogleFonts.inter(
+                                  textStyle: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.normal,
+                                    color: Color(0xff1E1A2A),
+                                  ),
+                                ),
+                                decoration: const InputDecoration(
+                                  fillColor: Color(0xfFFFFFFF),
+                                  filled: true,
+                                  border: OutlineInputBorder(),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: Color(0xffE8E8EA)),
+                                  ),
+                                  focusedBorder: InputBorder.none,
+                                ),
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return "Quantity field cannot be empty";
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              child: textFieldLabel('Requirements', 12),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 8, right: 8, top: 4),
+                              child: Container(
+                                padding: EdgeInsetsDirectional.only(top: 8),
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: reqBorder),
+                                  color: Colors.white,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(4)),
+                                ),
                                 height: 150,
                                 child: ListView.builder(
-                                  itemCount: listControllers.length,
+                                  shrinkWrap: true,
+                                  itemCount: sample2.length,
                                   itemBuilder: (context, index) {
-                                    if (listControllers.isEmpty) {
-                                      return const Text('EMpty.');
-                                    }
                                     return Padding(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 16, vertical: 8),
@@ -717,18 +994,14 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                                           Expanded(
                                             flex: 3,
                                             child: Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 8),
                                               decoration: const BoxDecoration(
-                                                color: Color(0xffE8E8EA),
+                                                color: Color(0xfffafafa),
                                                 borderRadius: BorderRadius.all(
-                                                  Radius.circular(4),
-                                                ),
+                                                    Radius.circular(4)),
                                               ),
                                               child: Center(
-                                                // Centering the TextFormField within the container
                                                 child: TextFormField(
+                                                  controller: sample2[index],
                                                   style: GoogleFonts.inter(
                                                     textStyle: const TextStyle(
                                                       fontSize: 14,
@@ -745,16 +1018,25 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                                                     suffixIcon: IconButton(
                                                       onPressed: () {
                                                         setState(() {
-                                                          listControllers[index]
+                                                          sample2[index]
                                                               .clear();
-                                                          listControllers[index]
+                                                          sample2[index]
                                                               .dispose();
-                                                          listControllers
+                                                          sample2
                                                               .removeAt(index);
+                                                          // Update border color based on listControllers length
+                                                          reqBorder =
+                                                              sample2.isEmpty
+                                                                  ? Colors.red
+                                                                  : Colors.grey;
                                                         });
                                                       },
                                                       icon: const Icon(
-                                                          Icons.delete_rounded),
+                                                        Icons.delete_rounded,
+                                                        color:
+                                                            Color(0xff8C8B92),
+                                                        size: 18,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
@@ -780,8 +1062,7 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                                     style: const ButtonStyle(),
                                     onPressed: () {
                                       setState(() {
-                                        listControllers
-                                            .add(TextEditingController());
+                                        sample2.add(TextEditingController());
                                       });
                                     },
                                     child: const Text('Add more requirements'),
@@ -798,10 +1079,9 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                                   Expanded(
                                     child: InkWell(
                                       onTap: () {
-                                        listControllers.clear();
+                                        sample2.clear();
                                         Navigator.pop(context);
-                                        listControllers
-                                            .add(TextEditingController());
+                                        sample2.add(TextEditingController());
                                       },
                                       child: Container(
                                         alignment: Alignment.center,
@@ -837,7 +1117,7 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                                             borderRadius: BorderRadius.all(
                                                 Radius.circular(4))),
                                         alignment: Alignment.center,
-                                        child: Text('ADD',
+                                        child: Text('EDIT',
                                             style: GoogleFonts.poppins(
                                                 textStyle: const TextStyle(
                                                     color: Colors.white,
@@ -847,6 +1127,32 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                                       ),
                                       onTap: () {
                                         _formKey.currentState!.validate();
+                                        List sample3 = List.generate(
+                                            sample2.length, (index) => "");
+
+                                        for (var i = 0;
+                                            i < sample2.length;
+                                            i++) {
+                                          sample3[i] = sample2[i].text;
+                                        }
+                                        NewEquipment updatedEquipment =
+                                            newEquip.copyWith(
+                                                itemName: editItemName.text,
+                                                itemDescription:
+                                                    editDescription.text,
+                                                itemQuantity: int.parse(
+                                                    editQuantity.text),
+                                                itemRequirements: sample3,
+                                                lastUpdatedOn: Timestamp.now(),
+                                                createdOn: newEquip.createdOn);
+                                        debugPrint(updatedEquipment.itemName);
+                                        debugPrint(
+                                            updatedEquipment.itemDescription);
+                                        debugPrint(updatedEquipment.itemQuantity
+                                            .toString());
+                                        debugPrint(sample2.toString()[0]);
+                                        _databaseService.updateItem(
+                                            equipmentId, updatedEquipment);
                                       },
                                     ),
                                   )

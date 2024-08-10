@@ -3,10 +3,14 @@ import 'package:barangay_adittion_hills_app/common/widgets/common_widgets.dart';
 import 'package:barangay_adittion_hills_app/models/document/document.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 import '../../../common/widgets/column_field_text.dart';
+
+final _formKey = GlobalKey<FormState>();
 
 class DocumentsPage extends StatefulWidget {
   const DocumentsPage({super.key});
@@ -36,138 +40,171 @@ void showUpdateDialogBox(String docsId, BuildContext context, Document doc,
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
             child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Update',
-                    style: GoogleFonts.poppins(
-                        textStyle: const TextStyle(
-                      color: Color(0xff0a0a0a),
-                      fontSize: 24,
-                      fontWeight: FontWeight.w600,
-                    )),
-                  ),
-                  const SizedBox(
-                    height: 40,
-                  ),
-                  Text(
-                    'Title',
-                    style: GoogleFonts.poppins(
-                        textStyle: const TextStyle(
-                            color: Color(0xff2294F2),
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600)),
-                  ),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    decoration: const BoxDecoration(
-                        color: Color(0xffE3F2FC),
-                        borderRadius: BorderRadius.all(Radius.circular(8))),
-                    child: TextField(
-                      controller: newTitle,
-                      cursorColor: const Color(0xff2294F2),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Update',
                       style: GoogleFonts.poppins(
                           textStyle: const TextStyle(
-                              color: Color(0xff333333),
-                              fontSize: 14,
-                              fontWeight: FontWeight.normal)),
-                      decoration:
-                          const InputDecoration(border: InputBorder.none),
+                        color: Color(0xff0a0a0a),
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
+                      )),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 40,
-                  ),
-                  Text(
-                    'Description',
-                    style: GoogleFonts.poppins(
-                        textStyle: const TextStyle(
-                            color: Color(0xff2294F2),
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500)),
-                  ),
-                  Container(
-                    width: double.infinity,
-                    height: 240,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    decoration: const BoxDecoration(
-                        color: Color(0xffE3F2FC),
-                        borderRadius: BorderRadius.all(Radius.circular(8))),
-                    child: TextField(
-                      controller: newDescription,
-                      cursorColor: const Color(0xff2294F2),
-                      keyboardType: TextInputType.multiline,
-                      maxLines: null,
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    Text(
+                      'Title',
                       style: GoogleFonts.poppins(
                           textStyle: const TextStyle(
-                              color: Color(0xff333333),
-                              fontSize: 14,
-                              fontWeight: FontWeight.normal)),
-                      decoration:
-                          const InputDecoration(border: InputBorder.none),
+                              color: Color(0xff2294F2),
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600)),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 24,
-                  ),
-                  Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        InkWell(
-                          child: Container(
-                            width: 120,
-                            height: 40,
-                            decoration: const BoxDecoration(
-                                color: Color(0xffFF7F50),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8))),
-                            child: Center(
-                                child: Text('Cancel',
-                                    style: GoogleFonts.poppins(
-                                        textStyle: const TextStyle(
-                                            color: Color(0xffFFFFFF),
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w400)))),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4, bottom: 24),
+                      child: TextFormField(
+                        controller: newTitle,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "Item Title cannot be empty!";
+                          }
+                          return null;
+                        },
+                        inputFormatters: [
+                          LengthLimitingTextInputFormatter(42),
+                        ],
+                        cursorColor: const Color(0xff1D1929),
+                        style: GoogleFonts.inter(
+                          textStyle: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.normal,
+                            color: Color(0xff1E1A2A),
                           ),
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
                         ),
-                        const SizedBox(
-                          width: 16,
-                        ),
-                        InkWell(
-                          child: Container(
-                            width: 120,
-                            height: 40,
-                            decoration: const BoxDecoration(
-                                color: Color(0xff2294F2),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8))),
-                            child: Center(
-                                child: Text('Save',
-                                    style: GoogleFonts.poppins(
-                                        textStyle: const TextStyle(
-                                            color: Color(0xffFFFFFF),
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w400)))),
+                        decoration: const InputDecoration(
+                          fillColor: Color(0xfFFFFFFF),
+                          filled: true,
+                          border: OutlineInputBorder(),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Color(0xffE8E8EA)),
                           ),
-                          onTap: () {
-                            Document updatedDocument = doc.copyWith(
-                                title: newTitle.text,
-                                description: newDescription.text,
-                                lastModifiedOn: Timestamp.now());
-                            _databaseService.updateDoc(docsId, updatedDocument);
-                            Navigator.pop(context);
-                          },
-                        )
-                      ],
+                          focusedBorder: InputBorder.none,
+                        ),
+                      ),
                     ),
-                  )
-                ],
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    Text(
+                      'Description',
+                      style: GoogleFonts.poppins(
+                          textStyle: const TextStyle(
+                              color: Color(0xff2294F2),
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500)),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 8,
+                      ),
+                      child: TextFormField(
+                        controller: newDescription,
+                        maxLines: null,
+                        keyboardType: TextInputType.multiline,
+                        style: GoogleFonts.inter(
+                          textStyle: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.normal,
+                            color: Color(0xff1E1A2A),
+                          ),
+                        ),
+                        decoration: const InputDecoration(
+                          fillColor: Color(0xffffffff),
+                          filled: true,
+                          contentPadding:
+                              EdgeInsets.symmetric(vertical: 30, horizontal: 8),
+                          border: OutlineInputBorder(),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Color(0xffE8E8EA)),
+                          ),
+                          focusedBorder: InputBorder.none,
+                        ),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "Document description cannot be empty!";
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 24,
+                    ),
+                    Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          InkWell(
+                            child: Container(
+                              width: 120,
+                              height: 40,
+                              decoration: const BoxDecoration(
+                                  color: Color(0xffFF7F50),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(8))),
+                              child: Center(
+                                  child: Text('Cancel',
+                                      style: GoogleFonts.poppins(
+                                          textStyle: const TextStyle(
+                                              color: Color(0xffFFFFFF),
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400)))),
+                            ),
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                          const SizedBox(
+                            width: 16,
+                          ),
+                          InkWell(
+                            child: Container(
+                              width: 120,
+                              height: 40,
+                              decoration: const BoxDecoration(
+                                  color: Color(0xff2294F2),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(8))),
+                              child: Center(
+                                  child: Text('Save',
+                                      style: GoogleFonts.poppins(
+                                          textStyle: const TextStyle(
+                                              color: Color(0xffFFFFFF),
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400)))),
+                            ),
+                            onTap: () {
+                              if (_formKey.currentState!.validate()) {
+                                Document updatedDocument = doc.copyWith(
+                                    title: newTitle.text,
+                                    description: newDescription.text,
+                                    lastModifiedOn: Timestamp.now());
+                                _databaseService.updateDoc(
+                                    docsId, updatedDocument);
+                                Navigator.pop(context);
+                              }
+                            },
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           ),
@@ -352,19 +389,22 @@ class _DocumentsPageState extends State<DocumentsPage> {
                                     ),
                                     borderRadius:
                                         BorderRadius.all(Radius.circular(4))),
-                                subtitle: Text(
-                                    "Last update: ${document.lastModifiedOn.toDate().toIso8601String()}"),
+                                leading: Text("${index + 1}"),
                                 title: Row(
                                   children: [
                                     // column 1
                                     Expanded(
+                                        child: Center(child: Text(docsId))),
+                                    // Column 2
+                                    Expanded(
                                         child: Center(
                                             child: Text(document.title))),
-                                    // Column 2
-                                    const Expanded(
-                                        child: Center(child: Text('column2'))),
-                                    const Expanded(
-                                        child: Center(child: Text('column3'))),
+                                    Expanded(
+                                        child: Center(
+                                            child: Text(DateFormat.yMMMd()
+                                                .add_jm()
+                                                .format(document.lastModifiedOn
+                                                    .toDate())))),
                                     Expanded(
                                         child: Container(
                                       // color: Colors.pinkAccent,
@@ -374,7 +414,9 @@ class _DocumentsPageState extends State<DocumentsPage> {
                                         children: [
                                           IconButton(
                                               tooltip: 'View',
-                                              onPressed: () {},
+                                              onPressed: () {
+                                                viewDoc(context, document);
+                                              },
                                               icon: const Icon(
                                                 Icons.remove_red_eye_rounded,
                                                 color: Color(0xff007bff),
@@ -445,9 +487,186 @@ class _DocumentsPageState extends State<DocumentsPage> {
       ),
     );
   }
+
+  void viewDoc(BuildContext context, Document doc) async {
+    TextEditingController _viewTitleController =
+        TextEditingController(text: doc.title);
+    TextEditingController _viewDescController =
+        TextEditingController(text: doc.description);
+
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(4))),
+            child: Container(
+              height: double.infinity,
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+              child: SingleChildScrollView(
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'View',
+                        style: GoogleFonts.poppins(
+                            textStyle: const TextStyle(
+                          color: Color(0xff0a0a0a),
+                          fontSize: 24,
+                          fontWeight: FontWeight.w600,
+                        )),
+                      ),
+                      const SizedBox(
+                        height: 40,
+                      ),
+                      Text(
+                        'Title',
+                        style: GoogleFonts.poppins(
+                            textStyle: const TextStyle(
+                                color: Color(0xff2294F2),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600)),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4, bottom: 24),
+                        child: TextFormField(
+                          readOnly: true,
+                          controller: _viewTitleController,
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return "Item Title cannot be empty!";
+                            }
+                            return null;
+                          },
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(42),
+                          ],
+                          cursorColor: const Color(0xff1D1929),
+                          style: GoogleFonts.inter(
+                            textStyle: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.normal,
+                              color: Color(0xff1E1A2A),
+                            ),
+                          ),
+                          decoration: const InputDecoration(
+                            fillColor: Color(0xfFFFFFFF),
+                            filled: true,
+                            border: OutlineInputBorder(),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xffE8E8EA)),
+                            ),
+                            focusedBorder: InputBorder.none,
+                          ),
+                        ),
+                      ),
+                      Text.rich(TextSpan(children: [
+                        TextSpan(
+                            text:
+                                "Created on: ${DateFormat.yMMMd().add_jm().format(doc.createdOn.toDate())}\n",
+                            style: GoogleFonts.poppins(
+                                textStyle: TextStyle(
+                                    fontStyle: FontStyle.italic,
+                                    fontSize: 10))),
+                        TextSpan(
+                            text:
+                                "Last modified on: ${DateFormat.yMMMd().add_jm().format(doc.lastModifiedOn.toDate())}",
+                            style: GoogleFonts.poppins(
+                                textStyle: TextStyle(
+                                    fontStyle: FontStyle.italic,
+                                    fontSize: 10))),
+                      ])),
+                      const SizedBox(
+                        height: 40,
+                      ),
+                      Text(
+                        'Description',
+                        style: GoogleFonts.poppins(
+                            textStyle: const TextStyle(
+                                color: Color(0xff2294F2),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500)),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 8,
+                        ),
+                        child: TextFormField(
+                          readOnly: true,
+                          controller: _viewDescController,
+                          maxLines: null,
+                          keyboardType: TextInputType.multiline,
+                          style: GoogleFonts.inter(
+                            textStyle: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.normal,
+                              color: Color(0xff1E1A2A),
+                            ),
+                          ),
+                          decoration: const InputDecoration(
+                            fillColor: Color(0xffffffff),
+                            filled: true,
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 30, horizontal: 8),
+                            border: OutlineInputBorder(),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xffE8E8EA)),
+                            ),
+                            focusedBorder: InputBorder.none,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 24,
+                      ),
+                      Container(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            InkWell(
+                              child: Container(
+                                width: 120,
+                                height: 40,
+                                decoration: const BoxDecoration(
+                                    color: Color(0xffFF7F50),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8))),
+                                child: Center(
+                                    child: Text('Close',
+                                        style: GoogleFonts.poppins(
+                                            textStyle: const TextStyle(
+                                                color: Color(0xffFFFFFF),
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w400)))),
+                              ),
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                            ),
+                            const SizedBox(
+                              width: 16,
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        });
+  }
 }
 
 void showAddNewDialogBox(BuildContext context) async {
+  TextEditingController addTitle = TextEditingController();
+  TextEditingController addDesc = TextEditingController();
+
   showDialog(
       barrierDismissible: false,
       context: context,
@@ -460,145 +679,174 @@ void showAddNewDialogBox(BuildContext context) async {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
             child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Add New Document',
-                    style: GoogleFonts.poppins(
-                        textStyle: const TextStyle(
-                      color: Color(0xff0a0a0a),
-                      fontSize: 24,
-                      fontWeight: FontWeight.w600,
-                    )),
-                  ),
-                  const SizedBox(
-                    height: 40,
-                  ),
-                  Text(
-                    'Title',
-                    style: GoogleFonts.poppins(
-                        textStyle: const TextStyle(
-                            color: Color(0xff2294F2),
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600)),
-                  ),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    decoration: const BoxDecoration(
-                        color: Color(0xffE3F2FC),
-                        borderRadius: BorderRadius.all(Radius.circular(8))),
-                    child: TextField(
-                      controller: _newDocument,
-                      cursorColor: const Color(0xff2294F2),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Add New Document',
                       style: GoogleFonts.poppins(
                           textStyle: const TextStyle(
-                              color: Color(0xff333333),
-                              fontSize: 14,
-                              fontWeight: FontWeight.normal)),
-                      decoration:
-                          const InputDecoration(border: InputBorder.none),
+                        color: Color(0xff0a0a0a),
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
+                      )),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 40,
-                  ),
-                  Text(
-                    'Description',
-                    style: GoogleFonts.poppins(
-                        textStyle: const TextStyle(
-                            color: Color(0xff2294F2),
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500)),
-                  ),
-                  Container(
-                    width: double.infinity,
-                    height: 240,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    decoration: const BoxDecoration(
-                        color: Color(0xffE3F2FC),
-                        borderRadius: BorderRadius.all(Radius.circular(8))),
-                    child: TextField(
-                      controller: _newDescription,
-                      cursorColor: const Color(0xff2294F2),
-                      keyboardType: TextInputType.multiline,
-                      maxLines: null,
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    Text(
+                      'Title',
                       style: GoogleFonts.poppins(
                           textStyle: const TextStyle(
-                              color: Color(0xff333333),
-                              fontSize: 14,
-                              fontWeight: FontWeight.normal)),
-                      decoration:
-                          const InputDecoration(border: InputBorder.none),
+                              color: Color(0xff2294F2),
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600)),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 24,
-                  ),
-                  Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        InkWell(
-                          child: Container(
-                            width: 120,
-                            height: 40,
-                            decoration: const BoxDecoration(
-                                color: Color(0xffFF7F50),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8))),
-                            child: Center(
-                                child: Text('Cancel',
-                                    style: GoogleFonts.poppins(
-                                        textStyle: const TextStyle(
-                                            color: Color(0xffFFFFFF),
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w400)))),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4, bottom: 24),
+                      child: TextFormField(
+                        controller: addTitle,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "Item Title cannot be empty!";
+                          }
+                          return null;
+                        },
+                        inputFormatters: [
+                          LengthLimitingTextInputFormatter(42),
+                        ],
+                        cursorColor: const Color(0xff1D1929),
+                        style: GoogleFonts.inter(
+                          textStyle: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.normal,
+                            color: Color(0xff1E1A2A),
                           ),
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
                         ),
-                        const SizedBox(
-                          width: 16,
-                        ),
-                        InkWell(
-                          child: Container(
-                            width: 120,
-                            height: 40,
-                            decoration: const BoxDecoration(
-                                color: Color(0xff2294F2),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8))),
-                            child: Center(
-                                child: Text('Add',
-                                    style: GoogleFonts.poppins(
-                                        textStyle: const TextStyle(
-                                            color: Color(0xffFFFFFF),
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w400)))),
+                        decoration: const InputDecoration(
+                          fillColor: Color(0xfFFFFFFF),
+                          filled: true,
+                          border: OutlineInputBorder(),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Color(0xffE8E8EA)),
                           ),
-                          onTap: () {
-                            if (_newDocument.text.isNotEmpty &&
-                                _newDescription.text.isNotEmpty) {
-                              Document document = Document(
-                                  title: _newDocument.text,
-                                  description: _newDescription.text,
-                                  createdOn: Timestamp.now(),
-                                  lastModifiedOn: Timestamp.now());
-                              _databaseService.addDoc(document);
+                          focusedBorder: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    Text(
+                      'Description',
+                      style: GoogleFonts.poppins(
+                          textStyle: const TextStyle(
+                              color: Color(0xff2294F2),
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500)),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 8,
+                      ),
+                      child: TextFormField(
+                        controller: addDesc,
+                        maxLines: null,
+                        keyboardType: TextInputType.multiline,
+                        style: GoogleFonts.inter(
+                          textStyle: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.normal,
+                            color: Color(0xff1E1A2A),
+                          ),
+                        ),
+                        decoration: const InputDecoration(
+                          fillColor: Color(0xffffffff),
+                          filled: true,
+                          contentPadding:
+                              EdgeInsets.symmetric(vertical: 30, horizontal: 8),
+                          border: OutlineInputBorder(),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Color(0xffE8E8EA)),
+                          ),
+                          focusedBorder: InputBorder.none,
+                        ),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "Document description cannot be empty!";
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 24,
+                    ),
+                    Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          InkWell(
+                            child: Container(
+                              width: 120,
+                              height: 40,
+                              decoration: const BoxDecoration(
+                                  color: Color(0xffFF7F50),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(8))),
+                              child: Center(
+                                  child: Text('Cancel',
+                                      style: GoogleFonts.poppins(
+                                          textStyle: const TextStyle(
+                                              color: Color(0xffFFFFFF),
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400)))),
+                            ),
+                            onTap: () {
                               Navigator.pop(context);
-                              _newDocument.clear();
-                              _newDescription.clear();
-                            }
-                            return;
-                          },
-                        )
-                      ],
-                    ),
-                  )
-                ],
+                            },
+                          ),
+                          const SizedBox(
+                            width: 16,
+                          ),
+                          InkWell(
+                            child: Container(
+                              width: 120,
+                              height: 40,
+                              decoration: const BoxDecoration(
+                                  color: Color(0xff2294F2),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(8))),
+                              child: Center(
+                                  child: Text('Add',
+                                      style: GoogleFonts.poppins(
+                                          textStyle: const TextStyle(
+                                              color: Color(0xffFFFFFF),
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400)))),
+                            ),
+                            onTap: () {
+                              if (_formKey.currentState!.validate()) {
+                                Document document = Document(
+                                    title: addTitle.text,
+                                    description: addDesc.text,
+                                    createdOn: Timestamp.now(),
+                                    lastModifiedOn: Timestamp.now());
+                                _databaseService.addDoc(document);
+                                Navigator.pop(context);
+                                _newDocument.clear();
+                                _newDescription.clear();
+                              }
+                              return;
+                            },
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           ),
