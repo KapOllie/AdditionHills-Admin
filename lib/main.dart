@@ -1,5 +1,6 @@
 import 'package:barangay_adittion_hills_app/core/configs/theme/app_theme.dart';
 import 'package:barangay_adittion_hills_app/firebase_options.dart';
+import 'package:barangay_adittion_hills_app/presentation/auth/pages/log_in_page.dart';
 import 'package:barangay_adittion_hills_app/presentation/equipment/pages/Sample.dart';
 import 'package:barangay_adittion_hills_app/presentation/home/bloc/admin_menu_item_blocs.dart';
 import 'package:barangay_adittion_hills_app/presentation/home/pages/home_page.dart';

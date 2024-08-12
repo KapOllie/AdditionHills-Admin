@@ -438,7 +438,7 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                                       if (value!.isEmpty) {
                                         return "Quantity field cannot be empty";
                                       }
-                                      return addQuantity.text;
+                                      return null;
                                     },
                                   ),
                                 ),
@@ -488,6 +488,12 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                                                   ),
                                                   child: Center(
                                                     child: TextFormField(
+                                                      validator: (value) {
+                                                        if (value!.isEmpty) {
+                                                          return "Add at least 1 requirement.";
+                                                        }
+                                                        return null;
+                                                      },
                                                       controller:
                                                           addItemRequirements[
                                                               index],
@@ -638,8 +644,6 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                                             ),
                                           ),
                                           onTap: () {
-                                            _formKey.currentState!.validate();
-
                                             List listControllerValue =
                                                 List.generate(
                                                     addItemRequirements.length,
@@ -651,26 +655,34 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                                                   addItemRequirements[i].text;
                                             }
 
-                                            NewEquipment addNewEquipment =
-                                                NewEquipment(
-                                                    itemName: addItemName.text,
-                                                    itemDescription:
-                                                        addItemDescription.text,
-                                                    itemQuantity: int.parse(
-                                                        addQuantity.text),
-                                                    itemRequirements:
-                                                        listControllerValue,
-                                                    createdOn: Timestamp.now(),
-                                                    lastUpdatedOn:
-                                                        Timestamp.now());
-                                            _databaseService
-                                                .addItem(addNewEquipment);
+                                            if (_formKey.currentState!
+                                                    .validate() &&
+                                                listControllerValue.first !=
+                                                    "") {
+                                              NewEquipment addNewEquipment =
+                                                  NewEquipment(
+                                                      itemName:
+                                                          addItemName.text,
+                                                      itemDescription:
+                                                          addItemDescription
+                                                              .text,
+                                                      itemQuantity: int.parse(
+                                                          addQuantity.text),
+                                                      itemRequirements:
+                                                          listControllerValue,
+                                                      createdOn:
+                                                          Timestamp.now(),
+                                                      lastUpdatedOn:
+                                                          Timestamp.now());
+                                              _databaseService
+                                                  .addItem(addNewEquipment);
 
-                                            addItemName.clear();
-                                            addItemDescription.clear();
-                                            addQuantity.clear();
-                                            addItemRequirements.clear();
-                                            Navigator.pop(context);
+                                              addItemName.clear();
+                                              addItemDescription.clear();
+                                              addQuantity.clear();
+                                              addItemRequirements.clear();
+                                              Navigator.pop(context);
+                                            }
                                           },
                                         ),
                                       ),
@@ -1001,6 +1013,12 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                                               ),
                                               child: Center(
                                                 child: TextFormField(
+                                                  validator: (value) {
+                                                    if (value!.isEmpty) {
+                                                      return "Minimun of 1 requirement is required.";
+                                                    }
+                                                    return null;
+                                                  },
                                                   controller: sample2[index],
                                                   style: GoogleFonts.inter(
                                                     textStyle: const TextStyle(
@@ -1082,6 +1100,9 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                                         sample2.clear();
                                         Navigator.pop(context);
                                         sample2.add(TextEditingController());
+                                        setState(() {
+                                          reqBorder = Colors.transparent;
+                                        });
                                       },
                                       child: Container(
                                         alignment: Alignment.center,
@@ -1135,24 +1156,24 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                                             i++) {
                                           sample3[i] = sample2[i].text;
                                         }
-                                        NewEquipment updatedEquipment =
-                                            newEquip.copyWith(
-                                                itemName: editItemName.text,
-                                                itemDescription:
-                                                    editDescription.text,
-                                                itemQuantity: int.parse(
-                                                    editQuantity.text),
-                                                itemRequirements: sample3,
-                                                lastUpdatedOn: Timestamp.now(),
-                                                createdOn: newEquip.createdOn);
-                                        debugPrint(updatedEquipment.itemName);
-                                        debugPrint(
-                                            updatedEquipment.itemDescription);
-                                        debugPrint(updatedEquipment.itemQuantity
-                                            .toString());
-                                        debugPrint(sample2.toString()[0]);
-                                        _databaseService.updateItem(
-                                            equipmentId, updatedEquipment);
+
+                                        if (_formKey.currentState!.validate()) {
+                                          NewEquipment updatedEquipment =
+                                              newEquip.copyWith(
+                                                  itemName: editItemName.text,
+                                                  itemDescription:
+                                                      editDescription.text,
+                                                  itemQuantity: int.parse(
+                                                      editQuantity.text),
+                                                  itemRequirements: sample3,
+                                                  lastUpdatedOn:
+                                                      Timestamp.now(),
+                                                  createdOn:
+                                                      newEquip.createdOn);
+
+                                          _databaseService.updateItem(
+                                              equipmentId, updatedEquipment);
+                                        }
                                       },
                                     ),
                                   )

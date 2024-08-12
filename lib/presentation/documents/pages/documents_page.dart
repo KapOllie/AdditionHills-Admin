@@ -24,7 +24,7 @@ final _newDescription = TextEditingController();
 final DatabaseService _databaseService = DatabaseService();
 
 void showUpdateDialogBox(String docsId, BuildContext context, Document doc,
-    DatabaseService _databaseService) {
+    DatabaseService databaseService) {
   final newTitle = TextEditingController(text: doc.title);
   final newDescription = TextEditingController(text: doc.description);
 
@@ -194,7 +194,7 @@ void showUpdateDialogBox(String docsId, BuildContext context, Document doc,
                                     title: newTitle.text,
                                     description: newDescription.text,
                                     lastModifiedOn: Timestamp.now());
-                                _databaseService.updateDoc(
+                                databaseService.updateDoc(
                                     docsId, updatedDocument);
                                 Navigator.pop(context);
                               }
@@ -216,9 +216,14 @@ class _DocumentsPageState extends State<DocumentsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
+      backgroundColor: const Color(0xffE6E6E6),
+      body: Padding(
+        padding: const EdgeInsets.only(top: 8, bottom: 8, left: 0, right: 8),
+        child: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(4)),
+              color: Colors.white),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
@@ -569,14 +574,14 @@ class _DocumentsPageState extends State<DocumentsPage> {
                             text:
                                 "Created on: ${DateFormat.yMMMd().add_jm().format(doc.createdOn.toDate())}\n",
                             style: GoogleFonts.poppins(
-                                textStyle: TextStyle(
+                                textStyle: const TextStyle(
                                     fontStyle: FontStyle.italic,
                                     fontSize: 10))),
                         TextSpan(
                             text:
                                 "Last modified on: ${DateFormat.yMMMd().add_jm().format(doc.lastModifiedOn.toDate())}",
                             style: GoogleFonts.poppins(
-                                textStyle: TextStyle(
+                                textStyle: const TextStyle(
                                     fontStyle: FontStyle.italic,
                                     fontSize: 10))),
                       ])),

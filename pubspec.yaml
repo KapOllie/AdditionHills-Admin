@@ -43,6 +43,7 @@ dependencies:
   firebase_analytics:
   flutter_svg: ^2.0.10+1
   intl:
+  file_picker:
 
 dev_dependencies:
   flutter_test:

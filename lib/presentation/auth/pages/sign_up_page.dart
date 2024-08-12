@@ -54,6 +54,7 @@ class _SignUpPageState extends State<SignUpPage> {
             child: Form(
               key: _formKey,
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
@@ -93,7 +94,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                 border: OutlineInputBorder(
                                     borderSide: BorderSide.none,
                                     borderRadius:
-                                        BorderRadius.all(Radius.circular(24))),
+                                        BorderRadius.all(Radius.circular(8))),
                                 fillColor: Color(0xffE3F2FC),
                                 filled: true,
                               ),
@@ -218,7 +219,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: const RoundedRectangleBorder(
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(24)),
+                                  BorderRadius.all(Radius.circular(8)),
                             ),
                           ),
                           child: Text(
@@ -244,7 +245,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: const RoundedRectangleBorder(
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(24)),
+                                  BorderRadius.all(Radius.circular(8)),
                             ),
                           ),
                           child: Text(

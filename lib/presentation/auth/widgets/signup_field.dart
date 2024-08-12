@@ -39,7 +39,7 @@ class _SignupFieldState extends State<SignupField> {
             contentPadding: const EdgeInsets.symmetric(horizontal: 16),
             border: const OutlineInputBorder(
               borderSide: BorderSide.none,
-              borderRadius: BorderRadius.all(Radius.circular(24)),
+              borderRadius: BorderRadius.all(Radius.circular(8)),
             ),
             fillColor: const Color(0xffE3F2FC),
             filled: true,
@@ -49,7 +49,7 @@ class _SignupFieldState extends State<SignupField> {
             contentPadding: const EdgeInsets.symmetric(horizontal: 16),
             border: const OutlineInputBorder(
               borderSide: BorderSide.none,
-              borderRadius: BorderRadius.all(Radius.circular(24)),
+              borderRadius: BorderRadius.all(Radius.circular(8)),
             ),
             fillColor: const Color(0xffE3F2FC),
             filled: true,
