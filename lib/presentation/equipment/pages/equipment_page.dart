@@ -1,11 +1,11 @@
 import 'package:barangay_adittion_hills_app/common/services/database_service.dart';
 import 'package:barangay_adittion_hills_app/common/widgets/column_field_text.dart';
 import 'package:barangay_adittion_hills_app/common/widgets/common_widgets.dart';
+import 'package:barangay_adittion_hills_app/common/widgets/textfield_validator/textfield_validators.dart';
 import 'package:barangay_adittion_hills_app/models/equipment/new_equipment.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 final _formKey = GlobalKey<FormState>();
@@ -25,6 +25,8 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xffE6E6E6),
+
       body: SafeArea(
           child: SingleChildScrollView(
         padding: const EdgeInsets.only(top: 40, left: 16, right: 16),
@@ -416,7 +418,7 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                                       horizontal: 8, vertical: 4),
                                   child: TextFormField(
                                     controller: addQuantity,
-                                    inputFormatters: onlyUnsignedNumbers(),
+                                    inputFormatters: onlyUnsignedNumbers(6),
                                     style: GoogleFonts.inter(
                                       textStyle: const TextStyle(
                                         fontSize: 14,
@@ -943,7 +945,7 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                                   horizontal: 8, vertical: 4),
                               child: TextFormField(
                                 controller: editQuantity,
-                                inputFormatters: onlyUnsignedNumbers(),
+                                inputFormatters: onlyUnsignedNumbers(6),
                                 keyboardType: TextInputType.number,
                                 style: GoogleFonts.inter(
                                   textStyle: const TextStyle(
@@ -1202,33 +1204,6 @@ Widget actionButton(Icon buttonIcon, void Function()? onPressed,
     color: iconColor,
     onPressed: onPressed,
   );
-}
-
-List<TextInputFormatter> onlyUnsignedNumbers() {
-  final disallowZero = FilteringTextInputFormatter.deny(
-    RegExp(r'^0+'),
-  );
-  return [
-    FilteringTextInputFormatter(RegExp("[0-9]"), allow: true),
-    TextInputFormatter.withFunction(
-        (TextEditingValue oldValue, TextEditingValue newValue) {
-      final newValueText = newValue.text;
-      if (newValueText.length > 6) {
-        return oldValue;
-      }
-      if (newValueText.length > 1 && newValueText[0].trim() == '0') {
-        newValue = disallowZero.formatEditUpdate(oldValue, newValue);
-        if (newValue.text.isEmpty) {
-          return oldValue;
-        }
-      }
-      if (newValueText.isNotEmpty) {
-        return int.tryParse(newValueText) != null ? newValue : oldValue;
-      }
-
-      return newValue;
-    })
-  ];
 }
 
 Widget textFieldLabel(String fieldText, double textSize) {

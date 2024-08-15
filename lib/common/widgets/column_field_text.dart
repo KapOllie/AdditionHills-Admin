@@ -16,7 +16,7 @@ class ColumnFieldText extends StatelessWidget {
         textStyle: TextStyle(
             color: Color(0xff0a0a0a),
             fontSize: 14,
-            fontWeight: FontWeight.w600),
+            fontWeight: FontWeight.w400),
       ),
     );
   }

@@ -57,7 +57,7 @@ class _AdminSidemenuState extends State<AdminSidemenu> {
                 ),
               ),
               AdminDrawerListTile(
-                fontSize: 14,
+                fontSize: 12,
                 padding: 0,
                 listTileTitle: 'Profile',
                 onTap: () {
@@ -70,7 +70,7 @@ class _AdminSidemenuState extends State<AdminSidemenu> {
               ),
               AdminDrawerListTile(
                   padding: 0,
-                  fontSize: 14,
+                  fontSize: 12,
                   listTileTitle: 'Dashboard',
                   onTap: () {
                     bloc.add(const NavigateToEvent(0));
@@ -80,7 +80,7 @@ class _AdminSidemenuState extends State<AdminSidemenu> {
                     color: Color(0xff1D1929),
                   )),
               AdminDrawerListTile(
-                fontSize: 14,
+                fontSize: 12,
                 padding: 0,
                 listTileTitle: 'Accounts',
                 onTap: () {
@@ -107,7 +107,7 @@ class _AdminSidemenuState extends State<AdminSidemenu> {
                     'Maintenance',
                     style: GoogleFonts.poppins(
                         textStyle: TextStyle(
-                      fontSize: 14,
+                      fontSize: 12,
                     )),
                   ),
                   children: [
@@ -124,7 +124,7 @@ class _AdminSidemenuState extends State<AdminSidemenu> {
                       padding: 28,
                       listTileTitle: 'Event Equipment',
                       onTap: () {
-                        bloc.add(NavigateToEvent(4));
+                        bloc.add(NavigateToEvent(3));
                       },
                     ),
                     AdminDrawerListTile(
@@ -132,7 +132,7 @@ class _AdminSidemenuState extends State<AdminSidemenu> {
                       padding: 28,
                       listTileTitle: 'Event Venues',
                       onTap: () {
-                        // bloc.add(NavigateToEvent(3));
+                        bloc.add(NavigateToEvent(4));
                       },
                     ),
                   ],
@@ -154,7 +154,7 @@ class _AdminSidemenuState extends State<AdminSidemenu> {
                   title: Text(
                     'Transaction',
                     style:
-                        GoogleFonts.poppins(textStyle: TextStyle(fontSize: 14)),
+                        GoogleFonts.poppins(textStyle: TextStyle(fontSize: 12)),
                   ),
                   children: [
                     AdminDrawerListTile(
@@ -162,7 +162,7 @@ class _AdminSidemenuState extends State<AdminSidemenu> {
                       padding: 28,
                       listTileTitle: 'Document Requests',
                       onTap: () {
-                        // bloc.add(NavigateToEvent(3));
+                        bloc.add(NavigateToEvent(7));
                       },
                     ),
                     AdminDrawerListTile(

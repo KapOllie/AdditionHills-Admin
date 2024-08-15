@@ -52,6 +52,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '769077879759',
     projectId: 'sampleproject1-2cb77',
     authDomain: 'sampleproject1-2cb77.firebaseapp.com',
+    databaseURL: 'https://sampleproject1-2cb77-default-rtdb.firebaseio.com',
     storageBucket: 'sampleproject1-2cb77.appspot.com',
     measurementId: 'G-5FK3DVQP96',
   );
@@ -61,6 +62,7 @@ class DefaultFirebaseOptions {
     appId: '1:769077879759:android:90425c5dbe11cb657628ba',
     messagingSenderId: '769077879759',
     projectId: 'sampleproject1-2cb77',
+    databaseURL: 'https://sampleproject1-2cb77-default-rtdb.firebaseio.com',
     storageBucket: 'sampleproject1-2cb77.appspot.com',
   );
 
@@ -69,7 +71,9 @@ class DefaultFirebaseOptions {
     appId: '1:769077879759:ios:d0ef8bc540850d687628ba',
     messagingSenderId: '769077879759',
     projectId: 'sampleproject1-2cb77',
+    databaseURL: 'https://sampleproject1-2cb77-default-rtdb.firebaseio.com',
     storageBucket: 'sampleproject1-2cb77.appspot.com',
     iosBundleId: 'com.example.barangayAdittionHillsApp',
   );
+
 }

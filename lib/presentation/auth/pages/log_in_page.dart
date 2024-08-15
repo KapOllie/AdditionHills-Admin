@@ -1,5 +1,9 @@
 import 'package:barangay_adittion_hills_app/presentation/auth/pages/sign_up_page.dart';
+import 'package:barangay_adittion_hills_app/presentation/auth/utils/firebase_auth_services.dart';
 import 'package:barangay_adittion_hills_app/presentation/auth/widgets/login_field.dart';
+import 'package:barangay_adittion_hills_app/presentation/home/pages/home_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -15,10 +19,18 @@ class LoginPage extends StatefulWidget {
 final _formKey = GlobalKey<FormState>();
 
 class _LoginPage extends State<LoginPage> {
+  final FirebaseAuthService _auth = FirebaseAuthService();
   bool _isPasswordVisible =
       true; // Variable to keep track of password visibility
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    super.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +60,7 @@ class _LoginPage extends State<LoginPage> {
                       const SizedBox(height: 24),
                       LoginField(
                         controller: _passwordController,
-                        obscuredText: !_isPasswordVisible, obscuringText: '•',
+                        obscuredText: _isPasswordVisible, obscuringText: '•',
                         iconButton: IconButton(
                             icon: Icon(
                               _isPasswordVisible
@@ -69,7 +81,9 @@ class _LoginPage extends State<LoginPage> {
                         width: 360,
                         height: 56,
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            _logIn();
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xff2294F2),
                             padding: const EdgeInsets.symmetric(vertical: 16),
@@ -129,6 +143,19 @@ class _LoginPage extends State<LoginPage> {
         ),
       ),
     );
+  }
+
+  void _logIn() async {
+    User? user = await _auth.signInWithEmailAndPassword(
+        _emailController.text, _passwordController.text);
+
+    if (user != null) {
+      const CircularProgressIndicator();
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => HomePage()));
+    } else {
+      debugPrint("User not found");
+    }
   }
 }
 

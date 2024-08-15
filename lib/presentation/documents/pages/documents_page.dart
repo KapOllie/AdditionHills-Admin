@@ -1,7 +1,9 @@
 import 'package:barangay_adittion_hills_app/common/services/database_service.dart';
 import 'package:barangay_adittion_hills_app/common/widgets/common_widgets.dart';
+import 'package:barangay_adittion_hills_app/common/widgets/textfield_validator/textfield_validators.dart';
 import 'package:barangay_adittion_hills_app/models/document/document.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -213,6 +215,25 @@ void showUpdateDialogBox(String docsId, BuildContext context, Document doc,
 }
 
 class _DocumentsPageState extends State<DocumentsPage> {
+  PlatformFile? _imageFile;
+
+  Future<void> _showPicker() async {
+    try {
+      FilePickerResult? result =
+          await FilePicker.platform.pickFiles(type: FileType.image);
+
+      if (result == null) {
+        return;
+      }
+      setState(() {
+        _imageFile = result.files.first;
+      });
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+    debugPrint(_imageFile.toString());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -220,6 +241,7 @@ class _DocumentsPageState extends State<DocumentsPage> {
       body: Padding(
         padding: const EdgeInsets.only(top: 8, bottom: 8, left: 0, right: 8),
         child: Container(
+          height: double.infinity,
           padding: const EdgeInsets.all(8),
           decoration: const BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(4)),
@@ -363,7 +385,7 @@ class _DocumentsPageState extends State<DocumentsPage> {
               ),
               const SizedBox(height: 10),
               SizedBox(
-                  height: 400,
+                  height: 300,
                   child: StreamBuilder(
                       stream: _databaseService.getDocuments(),
                       builder: (context, snapshot) {
@@ -493,7 +515,10 @@ class _DocumentsPageState extends State<DocumentsPage> {
     );
   }
 
-  void viewDoc(BuildContext context, Document doc) async {
+  void viewDoc(
+    BuildContext context,
+    Document doc,
+  ) async {
     TextEditingController _viewTitleController =
         TextEditingController(text: doc.title);
     TextEditingController _viewDescController =
@@ -569,6 +594,12 @@ class _DocumentsPageState extends State<DocumentsPage> {
                           ),
                         ),
                       ),
+                      if (_imageFile != null)
+                        Image.memory(
+                          Uint8List.fromList(_imageFile!.bytes!),
+                          width: 400,
+                          height: 600,
+                        ),
                       Text.rich(TextSpan(children: [
                         TextSpan(
                             text:
@@ -666,197 +697,275 @@ class _DocumentsPageState extends State<DocumentsPage> {
           );
         });
   }
-}
 
-void showAddNewDialogBox(BuildContext context) async {
-  TextEditingController addTitle = TextEditingController();
-  TextEditingController addDesc = TextEditingController();
+  showAddNewDialogBox(BuildContext context) {
+    TextEditingController addTitle = TextEditingController();
+    TextEditingController addDesc = TextEditingController();
+    TextEditingController addPrice = TextEditingController();
 
-  showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) {
-        return Dialog(
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(4))),
-          child: Container(
-            height: double.infinity,
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
-            child: SingleChildScrollView(
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Add New Document',
-                      style: GoogleFonts.poppins(
-                          textStyle: const TextStyle(
-                        color: Color(0xff0a0a0a),
-                        fontSize: 24,
-                        fontWeight: FontWeight.w600,
-                      )),
-                    ),
-                    const SizedBox(
-                      height: 40,
-                    ),
-                    Text(
-                      'Title',
-                      style: GoogleFonts.poppins(
-                          textStyle: const TextStyle(
-                              color: Color(0xff2294F2),
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600)),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 4, bottom: 24),
-                      child: TextFormField(
-                        controller: addTitle,
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return "Item Title cannot be empty!";
-                          }
-                          return null;
-                        },
-                        inputFormatters: [
-                          LengthLimitingTextInputFormatter(42),
-                        ],
-                        cursorColor: const Color(0xff1D1929),
-                        style: GoogleFonts.inter(
-                          textStyle: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.normal,
-                            color: Color(0xff1E1A2A),
-                          ),
-                        ),
-                        decoration: const InputDecoration(
-                          fillColor: Color(0xfFFFFFFF),
-                          filled: true,
-                          border: OutlineInputBorder(),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Color(0xffE8E8EA)),
-                          ),
-                          focusedBorder: InputBorder.none,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 40,
-                    ),
-                    Text(
-                      'Description',
-                      style: GoogleFonts.poppins(
-                          textStyle: const TextStyle(
-                              color: Color(0xff2294F2),
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500)),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 8,
-                      ),
-                      child: TextFormField(
-                        controller: addDesc,
-                        maxLines: null,
-                        keyboardType: TextInputType.multiline,
-                        style: GoogleFonts.inter(
-                          textStyle: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.normal,
-                            color: Color(0xff1E1A2A),
-                          ),
-                        ),
-                        decoration: const InputDecoration(
-                          fillColor: Color(0xffffffff),
-                          filled: true,
-                          contentPadding:
-                              EdgeInsets.symmetric(vertical: 30, horizontal: 8),
-                          border: OutlineInputBorder(),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Color(0xffE8E8EA)),
-                          ),
-                          focusedBorder: InputBorder.none,
-                        ),
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return "Document description cannot be empty!";
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 24,
-                    ),
-                    Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          InkWell(
-                            child: Container(
-                              width: 120,
-                              height: 40,
-                              decoration: const BoxDecoration(
-                                  color: Color(0xffFF7F50),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(8))),
-                              child: Center(
-                                  child: Text('Cancel',
-                                      style: GoogleFonts.poppins(
-                                          textStyle: const TextStyle(
-                                              color: Color(0xffFFFFFF),
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w400)))),
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (BuildContext context) {
+          return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+            return Dialog(
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(4))),
+              child: Container(
+                height: double.infinity,
+                width: MediaQuery.of(context).size.width / 2,
+                padding:
+                    const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+                child: SingleChildScrollView(
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: Text(
+                                'Add New Document',
+                                style: GoogleFonts.poppins(
+                                    textStyle: const TextStyle(
+                                  color: Color(0xff0a0a0a),
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w600,
+                                )),
+                              ),
                             ),
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
-                          ),
-                          const SizedBox(
-                            width: 16,
-                          ),
-                          InkWell(
-                            child: Container(
-                              width: 120,
-                              height: 40,
-                              decoration: const BoxDecoration(
+                            Expanded(
+                                flex: 1,
+                                child: SizedBox(
+                                  width: 24,
+                                  child: IconButton(
+                                      onPressed: () {
+                                        _showPicker();
+                                      },
+                                      icon: Icon(Icons.add_a_photo_rounded)),
+                                ))
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 40,
+                        ),
+                        Text(
+                          'Title',
+                          style: GoogleFonts.poppins(
+                              textStyle: const TextStyle(
                                   color: Color(0xff2294F2),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(8))),
-                              child: Center(
-                                  child: Text('Add',
-                                      style: GoogleFonts.poppins(
-                                          textStyle: const TextStyle(
-                                              color: Color(0xffFFFFFF),
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w400)))),
-                            ),
-                            onTap: () {
-                              if (_formKey.currentState!.validate()) {
-                                Document document = Document(
-                                    title: addTitle.text,
-                                    description: addDesc.text,
-                                    createdOn: Timestamp.now(),
-                                    lastModifiedOn: Timestamp.now());
-                                _databaseService.addDoc(document);
-                                Navigator.pop(context);
-                                _newDocument.clear();
-                                _newDescription.clear();
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600)),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4, bottom: 24),
+                          child: TextFormField(
+                            controller: addTitle,
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return "Item Title cannot be empty!";
                               }
-                              return;
+                              return null;
                             },
-                          )
-                        ],
-                      ),
-                    )
-                  ],
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(42),
+                            ],
+                            cursorColor: const Color(0xff1D1929),
+                            style: GoogleFonts.inter(
+                              textStyle: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.normal,
+                                color: Color(0xff1E1A2A),
+                              ),
+                            ),
+                            decoration: const InputDecoration(
+                              fillColor: Color(0xfFFFFFFF),
+                              filled: true,
+                              border: OutlineInputBorder(),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Color(0xffE8E8EA)),
+                              ),
+                              focusedBorder: InputBorder.none,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 40,
+                        ),
+                        Text(
+                          'Description',
+                          style: GoogleFonts.poppins(
+                              textStyle: const TextStyle(
+                                  color: Color(0xff2294F2),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500)),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 8,
+                          ),
+                          child: TextFormField(
+                            controller: addDesc,
+                            maxLines: null,
+                            keyboardType: TextInputType.multiline,
+                            style: GoogleFonts.inter(
+                              textStyle: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.normal,
+                                color: Color(0xff1E1A2A),
+                              ),
+                            ),
+                            decoration: const InputDecoration(
+                              fillColor: Color(0xffffffff),
+                              filled: true,
+                              contentPadding: EdgeInsets.symmetric(
+                                  vertical: 30, horizontal: 8),
+                              border: OutlineInputBorder(),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Color(0xffE8E8EA)),
+                              ),
+                              focusedBorder: InputBorder.none,
+                            ),
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return "Document description cannot be empty!";
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 24,
+                        ),
+                        Text(
+                          'Price',
+                          style: GoogleFonts.poppins(
+                              textStyle: const TextStyle(
+                                  color: Color(0xff2294F2),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500)),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4, bottom: 24),
+                          child: TextFormField(
+                            controller: addPrice,
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                setState(() {
+                                  addPrice.text = 'Free';
+                                });
+                              }
+                              return null;
+                            },
+                            inputFormatters: onlyUnsignedNumbers(4),
+                            cursorColor: const Color(0xff1D1929),
+                            style: GoogleFonts.inter(
+                              textStyle: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.normal,
+                                color: Color(0xff1E1A2A),
+                              ),
+                            ),
+                            decoration: const InputDecoration(
+                              fillColor: Color(0xfFFFFFFF),
+                              filled: true,
+                              border: OutlineInputBorder(),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Color(0xffE8E8EA)),
+                              ),
+                              focusedBorder: InputBorder.none,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          height: 100,
+                          width: 100,
+                          color: Colors.black,
+                        ),
+                        if (_imageFile != null)
+                          Image.memory(
+                            Uint8List.fromList(_imageFile!.bytes!),
+                            width: 400,
+                            height: 600,
+                          ),
+                        Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              InkWell(
+                                child: Container(
+                                  width: 120,
+                                  height: 40,
+                                  decoration: const BoxDecoration(
+                                      color: Color(0xffFF7F50),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(8))),
+                                  child: Center(
+                                      child: Text('Cancel',
+                                          style: GoogleFonts.poppins(
+                                              textStyle: const TextStyle(
+                                                  color: Color(0xffFFFFFF),
+                                                  fontSize: 14,
+                                                  fontWeight:
+                                                      FontWeight.w400)))),
+                                ),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              const SizedBox(
+                                width: 16,
+                              ),
+                              InkWell(
+                                child: Container(
+                                  width: 120,
+                                  height: 40,
+                                  decoration: const BoxDecoration(
+                                      color: Color(0xff2294F2),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(8))),
+                                  child: Center(
+                                      child: Text('Add',
+                                          style: GoogleFonts.poppins(
+                                              textStyle: const TextStyle(
+                                                  color: Color(0xffFFFFFF),
+                                                  fontSize: 14,
+                                                  fontWeight:
+                                                      FontWeight.w400)))),
+                                ),
+                                onTap: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    Document document = Document(
+                                        title: addTitle.text,
+                                        description: addDesc.text,
+                                        createdOn: Timestamp.now(),
+                                        lastModifiedOn: Timestamp.now());
+                                    _databaseService.addDoc(document);
+                                    Navigator.pop(context);
+                                    _newDocument.clear();
+                                    _newDescription.clear();
+                                  }
+                                  return;
+                                },
+                              )
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
-        );
-      });
+            );
+          });
+        });
+  }
 }
 
 void confirmToDeleteDialogBox(BuildContext context, String docsId) {
