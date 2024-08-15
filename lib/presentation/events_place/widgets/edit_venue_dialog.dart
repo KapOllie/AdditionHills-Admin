@@ -7,7 +7,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../common/widgets/textfield_validator/textfield_validators.dart';
 
 final _formKey = GlobalKey<FormState>();
-newVenueDialogBox(BuildContext context, DatabaseService _databaseService) {
+editVenueDialogBox(
+    BuildContext context, DatabaseService _databaseService, String venueId) {
   final List<TextEditingController> listControllers = [TextEditingController()];
   List<String> days = [
     'sunday',
@@ -17,6 +18,13 @@ newVenueDialogBox(BuildContext context, DatabaseService _databaseService) {
     'thursday',
     'friday',
     'saturday',
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
   ];
   String selectedDay = 'Sunday';
   final List<TextEditingController> availableDays = [TextEditingController()];
@@ -32,7 +40,7 @@ newVenueDialogBox(BuildContext context, DatabaseService _databaseService) {
   TextEditingController newEventDesc = TextEditingController();
   TextEditingController newEventContact = TextEditingController();
 
-  var numberDialog =
+  var editDialog =
       StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
     return Align(
       alignment: Alignment.centerRight,
@@ -835,7 +843,7 @@ newVenueDialogBox(BuildContext context, DatabaseService _databaseService) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
-      return numberDialog;
+      return editDialog;
     },
   );
 }

@@ -1,6 +1,7 @@
 import 'package:barangay_adittion_hills_app/models/document/document.dart';
 import 'package:barangay_adittion_hills_app/models/document_requests/document_request.dart';
 import 'package:barangay_adittion_hills_app/models/equipment/new_equipment.dart';
+import 'package:barangay_adittion_hills_app/models/venue/event_venue.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 const String DOC_COLLECTION_REF = "documents";
@@ -9,12 +10,23 @@ const String ITEM_COLLECTION_REF = "event_equipment";
 
 const String DOCREQ_COLLECTION_REF = "document_requests";
 
+const String VENUE_COLLECTION_REF = "event_venue";
+
 class DatabaseService {
   final _firestore = FirebaseFirestore.instance;
   late final CollectionReference _docsRef;
   late final CollectionReference _itemRef;
+  late final CollectionReference _venueRef;
   late final CollectionReference _docReqRef;
+
   DatabaseService() {
+    _venueRef = _firestore
+        .collection(VENUE_COLLECTION_REF)
+        .withConverter<EventVenue>(
+            fromFirestore: (snapshots, _) =>
+                EventVenue.fromJson(snapshots.data()!),
+            toFirestore: (eventVenue, _) => eventVenue.toJson());
+
     _docsRef = _firestore
         .collection(DOC_COLLECTION_REF)
         .withConverter<Document>(
@@ -75,5 +87,21 @@ class DatabaseService {
 
   void updateDocumentRequest(String docReqId, DocumentRequest docReq) {
     _docReqRef.doc(docReqId).update(docReq.toJson());
+  }
+
+  Stream<QuerySnapshot> getVenues() {
+    return _venueRef.snapshots();
+  }
+
+  void addVenue(EventVenue eventVenue) async {
+    _venueRef.add(eventVenue);
+  }
+
+  void deleteVenue(String venueId) {
+    _venueRef.doc(venueId).delete();
+  }
+
+  void updateVenue(String venueId, EventVenue eventVenue) {
+    _venueRef.doc(venueId).update(eventVenue.toJson());
   }
 }

@@ -4,7 +4,7 @@ class NewEquipment {
   String itemName;
   String itemDescription;
   int itemQuantity;
-  List<dynamic> itemRequirements; // Specify type if known (e.g., List<String>)
+  List<dynamic> itemRequirements;
   Timestamp createdOn;
   Timestamp lastUpdatedOn;
 

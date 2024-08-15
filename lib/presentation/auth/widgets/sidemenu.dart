@@ -38,7 +38,7 @@ class _AdminSidemenuState extends State<AdminSidemenu> {
                   child: Center(
                       child: Text.rich(TextSpan(children: [
                     TextSpan(
-                        text: 'Logo',
+                        text: 'Requ',
                         style: GoogleFonts.poppins(
                             textStyle: const TextStyle(
                           color: Color(0xff0a0a0a),
@@ -46,7 +46,7 @@ class _AdminSidemenuState extends State<AdminSidemenu> {
                           fontWeight: FontWeight.w500,
                         ))),
                     TextSpan(
-                        text: 'Name',
+                        text: 'Ease',
                         style: GoogleFonts.poppins(
                             textStyle: const TextStyle(
                           color: Colors.blue,

@@ -1,13 +1,14 @@
+import 'package:barangay_adittion_hills_app/common/services/database_service.dart';
 import 'package:barangay_adittion_hills_app/common/widgets/column_field_text.dart';
 import 'package:barangay_adittion_hills_app/common/widgets/textfield_validator/textfield_validators.dart';
+import 'package:barangay_adittion_hills_app/models/venue/event_venue.dart';
+import 'package:barangay_adittion_hills_app/presentation/events_place/widgets/edit_venue_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'widgets/new_venue_dialog.dart';
-
-final _formKey = GlobalKey<FormState>();
 
 class EventPlacePage extends StatefulWidget {
   const EventPlacePage({super.key});
@@ -17,6 +18,7 @@ class EventPlacePage extends StatefulWidget {
 }
 
 class _EventPlacePageState extends State<EventPlacePage> {
+  final DatabaseService _databaseService = DatabaseService();
   bool isClicked = true;
   @override
   Widget build(BuildContext context) {
@@ -52,14 +54,13 @@ class _EventPlacePageState extends State<EventPlacePage> {
                 height: 8,
               ),
               Expanded(
-                  child: Container(
-                width: double.infinity,
-                decoration: const BoxDecoration(
+                child: Container(
+                  decoration: const BoxDecoration(
                     borderRadius: BorderRadius.all(
                       Radius.circular(4),
                     ),
-                    color: Colors.white),
-                child: const SingleChildScrollView(
+                    color: Colors.white,
+                  ),
                   child: Column(
                     children: [
                       Padding(
@@ -102,11 +103,148 @@ class _EventPlacePageState extends State<EventPlacePage> {
                         child: Divider(
                           height: 2,
                         ),
+                      ),
+                      Expanded(
+                        child: StreamBuilder(
+                          stream: _databaseService.getVenues(),
+                          builder: (context, snapshot) {
+                            List eventVenues = snapshot.data?.docs ?? [];
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            }
+
+                            if (!snapshot.hasData ||
+                                snapshot.data?.docs.isEmpty == true) {
+                              return const Center(
+                                  child: Text('No venues available'));
+                            }
+
+                            if (eventVenues.isEmpty) {
+                              return Center(
+                                child: Text('Empty'),
+                              );
+                            }
+
+                            return ListView.builder(
+                              itemCount: eventVenues.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                EventVenue eventVenue =
+                                    eventVenues[index].data();
+                                String eventVenueId =
+                                    eventVenues[index].id.toString();
+                                debugPrint(eventVenueId);
+
+                                return Container(
+                                  decoration: const BoxDecoration(
+                                    border: Border(
+                                      bottom: BorderSide(
+                                        width: 0.5,
+                                        color: Color(0xffE6E6E6),
+                                      ),
+                                    ),
+                                  ),
+                                  child: ListTile(
+                                    titleAlignment:
+                                        ListTileTitleAlignment.center,
+                                    title: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            eventVenue.venueName,
+                                            textAlign: TextAlign.center,
+                                            style: GoogleFonts.poppins(
+                                              textStyle: const TextStyle(
+                                                color: Color(0xff0a0a0a),
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.normal,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            eventVenue.venueAddress,
+                                            textAlign: TextAlign.center,
+                                            style: GoogleFonts.poppins(
+                                              textStyle: const TextStyle(
+                                                color: Color(0xff0a0a0a),
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.normal,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            '0',
+                                            textAlign: TextAlign.center,
+                                            style: GoogleFonts.poppins(
+                                              textStyle: const TextStyle(
+                                                color: Color(0xff0a0a0a),
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.normal,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            eventVenue.venuePrice,
+                                            textAlign: TextAlign.center,
+                                            style: GoogleFonts.poppins(
+                                              textStyle: const TextStyle(
+                                                color: Color(0xff0a0a0a),
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.normal,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              IconButton(
+                                                  onPressed: () {
+                                                    editVenueDialogBox(
+                                                        context,
+                                                        _databaseService,
+                                                        eventVenueId);
+                                                  },
+                                                  icon: Icon(Icons
+                                                      .mode_edit_outline_rounded)),
+                                              IconButton(
+                                                  onPressed: () {
+                                                    deleteVenueDialogBox(
+                                                        context,
+                                                        _databaseService,
+                                                        eventVenueId);
+                                                  },
+                                                  icon: Icon(Icons
+                                                      .remove_circle_outline_rounded)),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        ),
                       )
                     ],
                   ),
                 ),
-              ))
+              )
             ],
           ),
         ),
@@ -114,7 +252,7 @@ class _EventPlacePageState extends State<EventPlacePage> {
           padding: const EdgeInsets.only(right: 32, bottom: 32),
           child: FloatingActionButton(
             onPressed: () {
-              newVenueDialogBox(context, _formKey);
+              newVenueDialogBox(context, _databaseService);
             },
             backgroundColor: Colors.blueGrey.shade900,
             shape: const CircleBorder(),
@@ -126,5 +264,50 @@ class _EventPlacePageState extends State<EventPlacePage> {
             ),
           ),
         ));
+  }
+
+  void deleteVenueDialogBox(
+      BuildContext context, DatabaseService _databaseService, String eventId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          icon: const Icon(
+            Icons.warning_rounded,
+            color: Color(0xffDC143C),
+            size: 48,
+          ),
+          title: Text(
+            'Are your sure?',
+            style: GoogleFonts.poppins(
+                textStyle: const TextStyle(
+                    color: Color(0xff0a0a0a), fontWeight: FontWeight.w600),
+                fontSize: 20),
+          ),
+          content: Text(
+            'Do you really want to delete this venue?\nThis process cannot be undone.',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.poppins(
+                textStyle: const TextStyle(
+                    color: Color(0xff0a0a0a), fontWeight: FontWeight.w400),
+                fontSize: 12),
+          ),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('Abort')),
+            TextButton(
+                onPressed: () {
+                  _databaseService.deleteVenue(eventId);
+                  Navigator.pop(context);
+                },
+                child: const Text('Delete')),
+          ],
+          actionsAlignment: MainAxisAlignment.center,
+        );
+      },
+    );
   }
 }
