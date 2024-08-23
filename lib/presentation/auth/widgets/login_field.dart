@@ -56,7 +56,7 @@ class _LoginField extends State<LoginField> {
             fillColor: const Color(0xffE3F2FC),
             filled: true,
             prefixIcon: Padding(
-              padding: const EdgeInsets.only(left: 16.0),
+              padding: const EdgeInsets.only(left: 16.0, right: 16.0),
               child: widget.prefixIcon,
             ),
             suffixIcon: Padding(

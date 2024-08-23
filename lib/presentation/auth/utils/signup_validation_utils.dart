@@ -6,7 +6,7 @@ String? validatePassword(String? value) {
   final regex =
       RegExp(r'^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$');
   if (value == null || value.isEmpty) {
-    return 'Password is required';
+    return 'Password field is required';
   } else if (!regex.hasMatch(value)) {
     return 'Password must be at least 8 characters long and include numbers and special characters';
   }
@@ -16,7 +16,7 @@ String? validatePassword(String? value) {
 String? validateConfirmPassword(
     String? value, TextEditingController passwordController) {
   if (value == null || value.isEmpty) {
-    return 'Passwords do not match';
+    return 'Password field is required';
   } else if (value != passwordController.text) {
     return 'Passwords do not match';
   }
@@ -24,9 +24,9 @@ String? validateConfirmPassword(
 }
 
 String? validateEmail(String? value) {
-  final regex = RegExp(r'^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z]+');
+  final regex = RegExp(r'^[a-zA-Z0-9_]+@[a-zA-Z0-9]+\.[a-zA-Z]+');
   if (value == null || value.isEmpty) {
-    return 'Email is required';
+    return 'Email field is required';
   } else if (!regex.hasMatch(value)) {
     return 'Enter a valid email address';
   }
@@ -35,7 +35,7 @@ String? validateEmail(String? value) {
 
 String? validateBirthday(String? value) {
   if (value == null || value.isEmpty) {
-    return 'Birthday is required';
+    return 'Birthday field is required';
   }
   final birthDate = DateTime.tryParse(value);
   if (birthDate == null) {

@@ -3,6 +3,7 @@ import 'package:barangay_adittion_hills_app/common/widgets/column_field_text.dar
 import 'package:barangay_adittion_hills_app/common/widgets/textfield_validator/textfield_validators.dart';
 import 'package:barangay_adittion_hills_app/models/venue/event_venue.dart';
 import 'package:barangay_adittion_hills_app/presentation/events_place/widgets/edit_venue_dialog.dart';
+import 'package:barangay_adittion_hills_app/presentation/events_place/widgets/view_venue.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -153,14 +154,18 @@ class _EventPlacePageState extends State<EventPlacePage> {
                                           CrossAxisAlignment.center,
                                       children: [
                                         Expanded(
-                                          child: Text(
-                                            eventVenue.venueName,
-                                            textAlign: TextAlign.center,
-                                            style: GoogleFonts.poppins(
-                                              textStyle: const TextStyle(
-                                                color: Color(0xff0a0a0a),
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.normal,
+                                          child: GestureDetector(
+                                            onTap: () => viewVenue(context,
+                                                eventVenue, eventVenueId),
+                                            child: Text(
+                                              eventVenue.venueName,
+                                              textAlign: TextAlign.center,
+                                              style: GoogleFonts.poppins(
+                                                textStyle: const TextStyle(
+                                                  color: Color(0xff0a0a0a),
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.normal,
+                                                ),
                                               ),
                                             ),
                                           ),
@@ -254,7 +259,7 @@ class _EventPlacePageState extends State<EventPlacePage> {
             onPressed: () {
               newVenueDialogBox(context, _databaseService);
             },
-            backgroundColor: Colors.blueGrey.shade900,
+            backgroundColor: Color(0xff6B3CEB),
             shape: const CircleBorder(),
             tooltip: 'New Venue',
             child: const Icon(

@@ -7,15 +7,16 @@ class NewEquipment {
   List<dynamic> itemRequirements;
   Timestamp createdOn;
   Timestamp lastUpdatedOn;
+  Map<String, dynamic> pricingTable;
 
-  NewEquipment({
-    required this.itemName,
-    required this.itemDescription,
-    required this.itemQuantity,
-    required this.itemRequirements,
-    required this.createdOn,
-    required this.lastUpdatedOn,
-  });
+  NewEquipment(
+      {required this.itemName,
+      required this.itemDescription,
+      required this.itemQuantity,
+      required this.itemRequirements,
+      required this.createdOn,
+      required this.lastUpdatedOn,
+      required this.pricingTable});
 
   NewEquipment.fromJson(Map<String, Object?> json)
       : this(
@@ -26,6 +27,7 @@ class NewEquipment {
               as List<dynamic>, // Specify type if known
           createdOn: json['createdOn'] as Timestamp,
           lastUpdatedOn: json['lastUpdatedOn'] as Timestamp,
+          pricingTable: json['pricingTable'] as Map<String, dynamic>,
         );
 
   NewEquipment copyWith({
@@ -35,6 +37,7 @@ class NewEquipment {
     List<dynamic>? itemRequirements,
     Timestamp? createdOn,
     Timestamp? lastUpdatedOn,
+    Map<String, dynamic>? pricingTable,
   }) {
     return NewEquipment(
       itemName: itemName ?? this.itemName,
@@ -43,6 +46,7 @@ class NewEquipment {
       itemRequirements: itemRequirements ?? this.itemRequirements,
       createdOn: createdOn ?? this.createdOn,
       lastUpdatedOn: lastUpdatedOn ?? this.lastUpdatedOn,
+      pricingTable: pricingTable ?? this.pricingTable,
     );
   }
 
@@ -54,6 +58,7 @@ class NewEquipment {
       'itemRequirements': itemRequirements,
       'createdOn': createdOn,
       'lastUpdatedOn': lastUpdatedOn,
+      'pricingTable': pricingTable,
     };
   }
 }

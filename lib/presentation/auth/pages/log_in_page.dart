@@ -1,4 +1,4 @@
-import 'package:barangay_adittion_hills_app/presentation/auth/pages/sign_up_page.dart';
+import 'package:barangay_adittion_hills_app/presentation/auth/pages/signup.dart';
 import 'package:barangay_adittion_hills_app/presentation/auth/utils/firebase_auth_services.dart';
 import 'package:barangay_adittion_hills_app/presentation/auth/widgets/login_field.dart';
 import 'package:barangay_adittion_hills_app/presentation/home/pages/home_page.dart';
@@ -94,7 +94,7 @@ class _LoginPage extends State<LoginPage> {
                           ),
                           child: Text(
                             'Login',
-                            style: GoogleFonts.poppins(
+                            style: GoogleFonts.inter(
                               textStyle: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
@@ -110,7 +110,7 @@ class _LoginPage extends State<LoginPage> {
                       Text.rich(TextSpan(children: [
                         TextSpan(
                           text: 'Don\'t have an account? ',
-                          style: GoogleFonts.poppins(
+                          style: GoogleFonts.inter(
                             textStyle: const TextStyle(
                               color: Color(0xff0a0a0a),
                               fontSize: 14,
@@ -120,20 +120,15 @@ class _LoginPage extends State<LoginPage> {
                         ),
                         TextSpan(
                             text: 'Sign up',
-                            style: GoogleFonts.poppins(
-                              textStyle: const TextStyle(
-                                color: Color(0xff2294F2),
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                            style: GoogleFonts.inter(
+                                textStyle: const TextStyle(
+                              color: Color(0xff2294F2),
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            )),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (BuildContext context) =>
-                                            const SignUpPage()));
+                                Navigator.pushNamed(context, '/signup');
                               }),
                       ]))
                     ],
@@ -152,7 +147,11 @@ class _LoginPage extends State<LoginPage> {
     if (user != null) {
       const CircularProgressIndicator();
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => HomePage()));
+          context,
+          MaterialPageRoute(
+              builder: (context) => HomePage(
+                    email: user.email!,
+                  )));
     } else {
       debugPrint("User not found");
     }
@@ -163,7 +162,7 @@ Widget _welcomeText() {
   return Text(
     textAlign: TextAlign.center,
     'Welcome',
-    style: GoogleFonts.poppins(
+    style: GoogleFonts.inter(
       textStyle: const TextStyle(
         color: Color(0xff0a0a0a),
         fontSize: 32,
@@ -177,7 +176,7 @@ Widget _welcomeSubText() {
   return Text(
     textAlign: TextAlign.center,
     'We\'ve missed you!',
-    style: GoogleFonts.poppins(
+    style: GoogleFonts.inter(
       textStyle: const TextStyle(
         color: Color(0xff0a0a0a),
         fontSize: 24,

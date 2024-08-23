@@ -1,4 +1,5 @@
 import 'package:barangay_adittion_hills_app/presentation/accounts/pages/accounts_page.dart';
+import 'package:barangay_adittion_hills_app/presentation/admin_profile.dart/admin_profile.dart';
 import 'package:barangay_adittion_hills_app/presentation/dashboard/pages/admin_dashboard_page.dart';
 import 'package:barangay_adittion_hills_app/presentation/auth/widgets/sidemenu.dart';
 import 'package:barangay_adittion_hills_app/presentation/documents/pages/documents_page.dart';
@@ -12,7 +13,8 @@ import '../bloc/admin_menu_item_blocs.dart';
 import '../bloc/admin_menu_item_state.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final String email;
+  const HomePage({super.key, required this.email});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -22,7 +24,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffE6E6E6),
+      backgroundColor: const Color(0xfff0ebf8),
       body: SafeArea(
         child: Row(
           children: [
@@ -45,8 +47,12 @@ class _HomePageState extends State<HomePage> {
                       return const EventEquipmentPage();
                     case 4:
                       return const EventPlacePage();
-                    case 7:
+                    case 5:
                       return const DocumentRequestPage();
+                    case 6:
+                      return AdminProfilePage(
+                        email: widget.email,
+                      );
                     default:
                       return const Center(child: Text('Page not found'));
                   }

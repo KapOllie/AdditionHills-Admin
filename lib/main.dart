@@ -1,9 +1,12 @@
+import 'package:barangay_adittion_hills_app/common/services/DocumentViewer.dart';
 import 'package:barangay_adittion_hills_app/core/configs/theme/app_theme.dart';
 import 'package:barangay_adittion_hills_app/firebase_options.dart';
-import 'package:barangay_adittion_hills_app/pickaboo.dart';
+import 'package:barangay_adittion_hills_app/presentation/accounts/pages/accounts_page.dart';
+import 'package:barangay_adittion_hills_app/presentation/admin_profile.dart/admin_profile.dart';
 import 'package:barangay_adittion_hills_app/presentation/auth/pages/log_in_page.dart';
+import 'package:barangay_adittion_hills_app/presentation/auth/pages/signup.dart';
 import 'package:barangay_adittion_hills_app/presentation/auth/widgets/login_field.dart';
-import 'package:barangay_adittion_hills_app/presentation/equipment/pages/Sample.dart';
+import 'package:barangay_adittion_hills_app/presentation/equipment/pages/equipment_page.dart';
 import 'package:barangay_adittion_hills_app/presentation/home/bloc/admin_menu_item_blocs.dart';
 import 'package:barangay_adittion_hills_app/presentation/home/pages/home_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -16,12 +19,8 @@ Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(
-      options: const FirebaseOptions(
-    apiKey: 'AIzaSyCZpHx8ToGB5EYoknfXoquskpewHBIidjE',
-    appId: '1:769077879759:web:78b9778286e08d1c7628ba',
-    messagingSenderId: '769077879759',
-    projectId: 'sampleproject1-2cb77',
-  ));
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   runApp(const MyApp());
 }
@@ -31,14 +30,24 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-        providers: [BlocProvider(create: (context) => AdminMenuItemBlocs())],
-        child: MaterialApp(
-          title: 'Draft',
-          debugShowCheckedModeBanner: false,
-          home: const HomePage(),
-          theme: AppTheme.lightTheme,
-          routes: {'/home': (context) => const HomePage()},
-        ));
+    return BlocProvider(
+      lazy: false,
+      create: (context) => AdminMenuItemBlocs(),
+      child: MaterialApp(
+        title: 'RequEase',
+        debugShowCheckedModeBanner: false,
+        home: HomePage(
+          email: 'koslove84@gmail.com',
+        ),
+        theme: AppTheme.lightTheme,
+        routes: {
+          '/home': (context) => const HomePage(
+                email: '',
+              ),
+          '/login': (context) => const LoginPage(),
+          '/signup': (context) => const SignupPage()
+        },
+      ),
+    );
   }
 }

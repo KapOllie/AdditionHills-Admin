@@ -17,14 +17,14 @@ class BasicAppbar extends StatelessWidget implements PreferredSizeWidget {
         centerTitle: true,
         title: Text.rich(TextSpan(children: [
           TextSpan(
-              text: 'Logo',
+              text: 'Requ',
               style: GoogleFonts.poppins(
                   textStyle: TextStyle(
                       color: Color(0xff0a0a0a),
                       fontSize: 20,
                       fontWeight: FontWeight.w500))),
           TextSpan(
-              text: 'Name',
+              text: 'Ease',
               style: GoogleFonts.poppins(
                   textStyle: TextStyle(
                       color: Color(0xff2294F2),

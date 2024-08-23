@@ -27,7 +27,7 @@ class _AdminSidemenuState extends State<AdminSidemenu> {
         elevation: 4,
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(4))),
-        backgroundColor: Colors.white,
+        backgroundColor: Color(0xff6B3CEB),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -39,7 +39,7 @@ class _AdminSidemenuState extends State<AdminSidemenu> {
                       child: Text.rich(TextSpan(children: [
                     TextSpan(
                         text: 'Requ',
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.inter(
                             textStyle: const TextStyle(
                           color: Color(0xff0a0a0a),
                           fontSize: 24,
@@ -47,9 +47,9 @@ class _AdminSidemenuState extends State<AdminSidemenu> {
                         ))),
                     TextSpan(
                         text: 'Ease',
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.inter(
                             textStyle: const TextStyle(
-                          color: Colors.blue,
+                          color: Colors.white,
                           fontSize: 24,
                           fontWeight: FontWeight.w500,
                         )))
@@ -57,30 +57,22 @@ class _AdminSidemenuState extends State<AdminSidemenu> {
                 ),
               ),
               AdminDrawerListTile(
-                fontSize: 12,
-                padding: 0,
-                listTileTitle: 'Profile',
-                onTap: () {
-                  // bloc.add(NavigateToEvent(1));
-                },
-                tileIcon: Icon(
-                  Icons.account_circle_rounded,
-                  color: Color(0xff1D1929),
-                ),
-              ),
-              AdminDrawerListTile(
+                  hoverColor: Color(0xfff9ab00),
+                  textColor: Colors.white,
                   padding: 0,
-                  fontSize: 12,
+                  fontSize: 14,
                   listTileTitle: 'Dashboard',
                   onTap: () {
                     bloc.add(const NavigateToEvent(0));
                   },
                   tileIcon: Icon(
                     Icons.space_dashboard_rounded,
-                    color: Color(0xff1D1929),
+                    color: Colors.white,
                   )),
               AdminDrawerListTile(
-                fontSize: 12,
+                hoverColor: Color(0xfff9ab00),
+                textColor: Colors.white,
+                fontSize: 14,
                 padding: 0,
                 listTileTitle: 'Accounts',
                 onTap: () {
@@ -88,7 +80,7 @@ class _AdminSidemenuState extends State<AdminSidemenu> {
                 },
                 tileIcon: Icon(
                   Icons.manage_accounts_rounded,
-                  color: Color(0xff1D1929),
+                  color: Colors.white,
                 ),
               ),
               Padding(
@@ -96,18 +88,18 @@ class _AdminSidemenuState extends State<AdminSidemenu> {
                 child: ExpansionTile(
                   maintainState: true,
                   textColor: Color(0xff1D1929),
-                  collapsedTextColor: Color(0xff1D1929),
+                  collapsedTextColor: Colors.white,
                   iconColor: Color(0xff1D1929),
-                  collapsedIconColor: Color(0xff1D1929),
+                  collapsedIconColor: Colors.white,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(4))),
                   backgroundColor: Color(0xfffafafa),
                   leading: Icon(Icons.build_circle_rounded),
                   title: Text(
                     'Maintenance',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.inter(
                         textStyle: TextStyle(
-                      fontSize: 12,
+                      fontSize: 14,
                     )),
                   ),
                   children: [
@@ -143,9 +135,9 @@ class _AdminSidemenuState extends State<AdminSidemenu> {
                 child: ExpansionTile(
                   maintainState: true,
                   textColor: Color(0xff1D1929),
-                  collapsedTextColor: Color(0xff1D1929),
+                  collapsedTextColor: Colors.white,
                   iconColor: Color(0xff1D1929),
-                  collapsedIconColor: Color(0xff1D1929),
+                  collapsedIconColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(4)),
                   ),
@@ -154,7 +146,7 @@ class _AdminSidemenuState extends State<AdminSidemenu> {
                   title: Text(
                     'Transaction',
                     style:
-                        GoogleFonts.poppins(textStyle: TextStyle(fontSize: 12)),
+                        GoogleFonts.inter(textStyle: TextStyle(fontSize: 14)),
                   ),
                   children: [
                     AdminDrawerListTile(
@@ -162,7 +154,7 @@ class _AdminSidemenuState extends State<AdminSidemenu> {
                       padding: 28,
                       listTileTitle: 'Document Requests',
                       onTap: () {
-                        bloc.add(NavigateToEvent(7));
+                        bloc.add(NavigateToEvent(5));
                       },
                     ),
                     AdminDrawerListTile(
@@ -174,6 +166,20 @@ class _AdminSidemenuState extends State<AdminSidemenu> {
                       },
                     ),
                   ],
+                ),
+              ),
+              AdminDrawerListTile(
+                hoverColor: Color(0xfff9ab00),
+                textColor: Colors.white,
+                fontSize: 14,
+                padding: 0,
+                listTileTitle: 'My Profile',
+                onTap: () {
+                  bloc.add(NavigateToEvent(6));
+                },
+                tileIcon: Icon(
+                  Icons.account_circle_rounded,
+                  color: Colors.white,
                 ),
               ),
             ],

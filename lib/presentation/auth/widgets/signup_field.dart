@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SignupField extends StatefulWidget {
@@ -10,6 +11,8 @@ class SignupField extends StatefulWidget {
     super.key,
     this.obscuringText,
     this.obscuredText = false,
+    this.inputFormatter,
+    this.hintText,
   });
 
   final TextEditingController controller;
@@ -18,6 +21,8 @@ class SignupField extends StatefulWidget {
   final IconButton? iconButton;
   final String? obscuringText;
   final bool obscuredText;
+  final List<TextInputFormatter>? inputFormatter;
+  final String? hintText;
 
   @override
   State<SignupField> createState() => _SignupFieldState();
@@ -27,6 +32,7 @@ class _SignupFieldState extends State<SignupField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      inputFormatters: widget.inputFormatter,
       style: GoogleFonts.poppins(
         textStyle: const TextStyle(
           color: Color(0xff818A91),
@@ -46,6 +52,7 @@ class _SignupFieldState extends State<SignupField> {
             suffixIcon: widget.iconButton,
           ) ??
           InputDecoration(
+            hintText: widget.hintText,
             contentPadding: const EdgeInsets.symmetric(horizontal: 16),
             border: const OutlineInputBorder(
               borderSide: BorderSide.none,

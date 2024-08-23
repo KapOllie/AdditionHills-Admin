@@ -12,7 +12,7 @@ class ColumnFieldText extends StatelessWidget {
     return Text(
       textAlign: TextAlign.center,
       fieldText,
-      style: GoogleFonts.poppins(
+      style: GoogleFonts.inter(
         textStyle: TextStyle(
             color: Color(0xff0a0a0a),
             fontSize: 14,

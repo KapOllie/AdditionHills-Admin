@@ -8,24 +8,29 @@ class AdminDrawerListTile extends StatelessWidget {
       required this.listTileTitle,
       required this.onTap,
       this.tileIcon,
-      required this.fontSize});
+      required this.fontSize,
+      this.textColor,
+      this.hoverColor});
   final String listTileTitle;
   final Icon? tileIcon;
   final Function()? onTap;
   final double padding;
   final double fontSize;
+  final Color? textColor;
+  final Color? hoverColor;
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       child: ListTile(
+        hoverColor: hoverColor,
         title: Padding(
           padding: EdgeInsets.only(left: padding),
           child: Text(
             listTileTitle,
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.inter(
                 textStyle: TextStyle(
-              color: Color(0xff1D1929),
+              color: textColor,
               fontWeight: FontWeight.w400,
               fontSize: fontSize,
             )),
