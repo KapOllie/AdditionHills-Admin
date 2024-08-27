@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:barangay_adittion_hills_app/presentation/auth/widgets/sidemenu_list_tile.dart';
+import 'package:barangay_adittion_hills_app/presentation/home/bloc/admin_menu_item_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,171 +22,211 @@ class _AdminSidemenuState extends State<AdminSidemenu> {
   Widget build(BuildContext context) {
     final bloc = BlocProvider.of<AdminMenuItemBlocs>(context);
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-      child: Drawer(
-        elevation: 4,
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(4))),
-        backgroundColor: Color(0xff6B3CEB),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: DrawerHeader(
-                  child: Center(
-                      child: Text.rich(TextSpan(children: [
-                    TextSpan(
-                        text: 'Requ',
-                        style: GoogleFonts.inter(
-                            textStyle: const TextStyle(
-                          color: Color(0xff0a0a0a),
-                          fontSize: 24,
-                          fontWeight: FontWeight.w500,
-                        ))),
-                    TextSpan(
-                        text: 'Ease',
-                        style: GoogleFonts.inter(
-                            textStyle: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.w500,
-                        )))
-                  ]))),
-                ),
-              ),
-              AdminDrawerListTile(
-                  hoverColor: Color(0xfff9ab00),
-                  textColor: Colors.white,
-                  padding: 0,
-                  fontSize: 14,
-                  listTileTitle: 'Dashboard',
-                  onTap: () {
-                    bloc.add(const NavigateToEvent(0));
-                  },
-                  tileIcon: Icon(
-                    Icons.space_dashboard_rounded,
-                    color: Colors.white,
-                  )),
-              AdminDrawerListTile(
-                hoverColor: Color(0xfff9ab00),
-                textColor: Colors.white,
-                fontSize: 14,
-                padding: 0,
-                listTileTitle: 'Accounts',
-                onTap: () {
-                  bloc.add(NavigateToEvent(1));
-                },
-                tileIcon: Icon(
-                  Icons.manage_accounts_rounded,
-                  color: Colors.white,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                child: ExpansionTile(
-                  maintainState: true,
-                  textColor: Color(0xff1D1929),
-                  collapsedTextColor: Colors.white,
-                  iconColor: Color(0xff1D1929),
-                  collapsedIconColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(4))),
-                  backgroundColor: Color(0xfffafafa),
-                  leading: Icon(Icons.build_circle_rounded),
-                  title: Text(
-                    'Maintenance',
-                    style: GoogleFonts.inter(
-                        textStyle: TextStyle(
+    return BlocBuilder<AdminMenuItemBlocs, AdminMenuItemState>(
+      builder: (context, state) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Drawer(
+            elevation: 4,
+            shape:
+                const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+            backgroundColor: Colors.white,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: DrawerHeader(
+                      child: Center(
+                          child: Text.rich(TextSpan(children: [
+                        TextSpan(
+                            text: 'Requ',
+                            style: GoogleFonts.inter(
+                                textStyle: const TextStyle(
+                              color: Color(0xff1B2533),
+                              fontSize: 36,
+                              fontWeight: FontWeight.w500,
+                            ))),
+                        TextSpan(
+                            text: '/Ease',
+                            style: GoogleFonts.inter(
+                                textStyle: const TextStyle(
+                              color: Color(0xff8963EF),
+                              fontSize: 36,
+                              fontWeight: FontWeight.w500,
+                            )))
+                      ]))),
+                    ),
+                  ),
+                  AdminDrawerListTile(
+                      textColor: Color(0xff1B2533),
+                      padding: 0,
                       fontSize: 14,
-                    )),
+                      listTileTitle: 'Dashboard',
+                      selected: state.index == 0,
+                      onTap: () {
+                        bloc.add(const NavigateToEvent(0));
+                      },
+                      tileIcon: Icon(
+                        Icons.space_dashboard_rounded,
+                        color: Color(0xff1B2533),
+                      )),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Row(
+                      children: [
+                        Text(
+                          'Maintenance',
+                          style: GoogleFonts.inter(
+                              textStyle: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          )),
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Expanded(
+                            child: Container(
+                          height: 1,
+                          color: Colors.grey,
+                        ))
+                      ],
+                    ),
                   ),
-                  children: [
-                    AdminDrawerListTile(
-                      fontSize: 12,
-                      padding: 28,
-                      listTileTitle: 'Documents',
-                      onTap: () {
-                        bloc.add(NavigateToEvent(2));
-                      },
-                    ),
-                    AdminDrawerListTile(
-                      fontSize: 12,
-                      padding: 28,
-                      listTileTitle: 'Event Equipment',
-                      onTap: () {
-                        bloc.add(NavigateToEvent(3));
-                      },
-                    ),
-                    AdminDrawerListTile(
-                      fontSize: 12,
-                      padding: 28,
-                      listTileTitle: 'Event Venues',
-                      onTap: () {
-                        bloc.add(NavigateToEvent(4));
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                child: ExpansionTile(
-                  maintainState: true,
-                  textColor: Color(0xff1D1929),
-                  collapsedTextColor: Colors.white,
-                  iconColor: Color(0xff1D1929),
-                  collapsedIconColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(4)),
+                  AdminDrawerListTile(
+                    textColor: Color(0xff1B2533),
+                    fontSize: 14,
+                    padding: 28,
+                    listTileTitle: 'Documents',
+                    selected: state.index == 1,
+                    onTap: () {
+                      bloc.add(NavigateToEvent(1));
+                    },
                   ),
-                  backgroundColor: Color(0xfffafafa),
-                  leading: Icon(Icons.swap_vertical_circle_rounded),
-                  title: Text(
-                    'Transaction',
-                    style:
-                        GoogleFonts.inter(textStyle: TextStyle(fontSize: 14)),
+                  AdminDrawerListTile(
+                    textColor: Color(0xff1B2533),
+                    fontSize: 14,
+                    padding: 28,
+                    listTileTitle: 'Event Equipment',
+                    selected: state.index == 2,
+                    onTap: () {
+                      bloc.add(NavigateToEvent(2));
+                    },
                   ),
-                  children: [
-                    AdminDrawerListTile(
-                      fontSize: 12,
-                      padding: 28,
-                      listTileTitle: 'Document Requests',
-                      onTap: () {
-                        bloc.add(NavigateToEvent(5));
-                      },
+                  AdminDrawerListTile(
+                    textColor: Color(0xff1B2533),
+                    fontSize: 14,
+                    padding: 28,
+                    listTileTitle: 'Event Venues',
+                    selected: state.index == 3,
+                    onTap: () {
+                      bloc.add(NavigateToEvent(3));
+                    },
+                  ),
+                  AdminDrawerListTile(
+                    textColor: Color(0xff1B2533),
+                    fontSize: 14,
+                    padding: 28,
+                    listTileTitle: 'Announcements',
+                    onTap: () {
+                      // bloc.add(NavigateToEvent(4));
+                    },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: Row(
+                      children: [
+                        Text(
+                          'Transaction',
+                          style: GoogleFonts.inter(
+                              textStyle: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          )),
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Expanded(
+                            child: Container(
+                          height: 1,
+                          color: Colors.grey,
+                        ))
+                      ],
                     ),
-                    AdminDrawerListTile(
-                      fontSize: 12,
-                      padding: 28,
-                      listTileTitle: 'Venue Requests',
-                      onTap: () {
-                        // bloc.add(NavigateToEvent(3));
-                      },
+                  ),
+                  AdminDrawerListTile(
+                    textColor: Color(0xff1B2533),
+                    fontSize: 14,
+                    padding: 28,
+                    listTileTitle: 'Document Requests',
+                    selected: state.index == 5,
+                    onTap: () {
+                      bloc.add(NavigateToEvent(5));
+                    },
+                  ),
+                  AdminDrawerListTile(
+                    textColor: Color(0xff1B2533),
+                    fontSize: 14,
+                    padding: 28,
+                    listTileTitle: 'Venue Requests',
+                    onTap: () {
+                      // bloc.add(NavigateToEvent(3));
+                    },
+                  ),
+                  AdminDrawerListTile(
+                    textColor: Color(0xff1B2533),
+                    fontSize: 14,
+                    padding: 28,
+                    listTileTitle: 'Event Equipment Requests',
+                    onTap: () {
+                      // bloc.add(NavigateToEvent(3));
+                    },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: Row(
+                      children: [
+                        Text(
+                          'Account',
+                          style: GoogleFonts.inter(
+                              textStyle: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          )),
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Expanded(
+                            child: Container(
+                          height: 1,
+                          color: Colors.grey,
+                        ))
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  AdminDrawerListTile(
+                    textColor: Color(0xff1B2533),
+                    fontSize: 14,
+                    padding: 0,
+                    listTileTitle: 'My Profile',
+                    onTap: () {
+                      bloc.add(NavigateToEvent(6));
+                    },
+                    tileIcon: Icon(
+                      Icons.account_circle_rounded,
+                      color: Color(0xff1B2533),
+                    ),
+                  ),
+                ],
               ),
-              AdminDrawerListTile(
-                hoverColor: Color(0xfff9ab00),
-                textColor: Colors.white,
-                fontSize: 14,
-                padding: 0,
-                listTileTitle: 'My Profile',
-                onTap: () {
-                  bloc.add(NavigateToEvent(6));
-                },
-                tileIcon: Icon(
-                  Icons.account_circle_rounded,
-                  color: Colors.white,
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

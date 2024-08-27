@@ -123,8 +123,13 @@ class DatabaseService {
     return _itemRef.snapshots();
   }
 
-  void updateItem(String itemId, NewEquipment newEquip) {
-    _itemRef.doc(itemId).update(newEquip.toJson());
+  Future<bool> updateItem(String itemId, NewEquipment newEquip) async {
+    try {
+      await _itemRef.doc(itemId).update(newEquip.toJson());
+      return true;
+    } on Exception catch (e) {
+      return false;
+    }
   }
 
   void addItem(NewEquipment newEquip) async {
@@ -155,16 +160,26 @@ class DatabaseService {
     return _venueRef.snapshots();
   }
 
-  void addVenue(EventVenue eventVenue) async {
-    _venueRef.add(eventVenue);
+  Future<bool> addVenue(EventVenue eventVenue) async {
+    try {
+      await _venueRef.add(eventVenue);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   void deleteVenue(String venueId) {
     _venueRef.doc(venueId).delete();
   }
 
-  void updateVenue(String venueId, EventVenue eventVenue) {
-    _venueRef.doc(venueId).update(eventVenue.toJson());
+  Future<bool> updateVenue(String venueId, EventVenue eventVenue) async {
+    try {
+      await _venueRef.doc(venueId).update(eventVenue.toJson());
+      return true;
+    } on Exception catch (e) {
+      return false;
+    }
   }
 
   Future<List<DocumentSnapshot>>

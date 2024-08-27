@@ -1,5 +1,6 @@
 import 'package:barangay_adittion_hills_app/common/services/database_service.dart';
 import 'package:barangay_adittion_hills_app/common/widgets/common_widgets.dart';
+import 'package:barangay_adittion_hills_app/common/widgets/field_label/text_field.dart';
 import 'package:barangay_adittion_hills_app/models/user/user_web.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ class AccountsPage extends StatefulWidget {
 }
 
 class _AccountsPage extends State<AccountsPage> {
+  FieldLabel accountsText = FieldLabel();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,17 +36,9 @@ class _AccountsPage extends State<AccountsPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 8, horizontal: 16),
-                        child: Text(
-                          'Accounts',
-                          style: GoogleFonts.inter(
-                              textStyle: const TextStyle(
-                                  color: Color(0xff202124),
-                                  fontSize: 32,
-                                  fontWeight: FontWeight.w500)),
-                        ),
-                      ),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8, horizontal: 16),
+                          child: accountsText.headText('Accounts')),
                       Container(
                         padding: const EdgeInsets.symmetric(
                             vertical: 4, horizontal: 16),
@@ -332,230 +326,230 @@ class _AccountsPage extends State<AccountsPage> {
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 32),
-                        child: Divider(),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 4, horizontal: 16),
-                        height: 56,
-                        width: double.infinity,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 4,
-                              ),
-                              child: Text(
-                                'Admin (2)',
-                                style: GoogleFonts.inter(
-                                    textStyle: const TextStyle(
-                                        color: Color(0xff202124),
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500)),
-                              ),
-                            ),
-                            Container(
-                              width: 280,
-                              height: double.infinity,
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                border: Border(
-                                  left: BorderSide(color: Color(0xffdadce0)),
-                                  top: BorderSide(color: Color(0xffdadce0)),
-                                  bottom: BorderSide(color: Color(0xffdadce0)),
-                                  right: BorderSide(color: Color(0xffdadce0)),
-                                ),
-                                borderRadius: BorderRadius.zero,
-                              ),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 4),
-                                      child: TextField(
-                                        // controller: searchDoc,
-                                        style: GoogleFonts.inter(
-                                          textStyle: const TextStyle(
-                                            color: Color(0xff202124),
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                        decoration: InputDecoration(
-                                          contentPadding:
-                                              const EdgeInsets.symmetric(
-                                                  horizontal: 8),
-                                          focusedBorder: InputBorder.none,
-                                          enabledBorder: InputBorder.none,
-                                          hintText: 'Search user by email',
-                                          hintStyle: GoogleFonts.inter(
-                                            textStyle: const TextStyle(
-                                              color: Color(0xff202124),
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                        ),
-                                        cursorColor: const Color(0xff202124),
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    decoration: const BoxDecoration(
-                                      border: Border(
-                                        left: BorderSide(
-                                            color: Color(0xffdadce0)),
-                                      ),
-                                    ),
-                                    child: IconButton(
-                                      icon: const Icon(Icons.search_rounded),
-                                      onPressed: () {
-                                        debugPrint('Search tapped');
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 8, horizontal: 16),
-                        child: Container(
-                          height: 300,
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              width: 1,
-                              color: const Color(0xffdadce0),
-                            ),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                alignment: Alignment.center,
-                                height: 44,
-                                decoration: const BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                      color: Color(0xffdadce0),
-                                      width: 1,
-                                    ),
-                                  ),
-                                ),
-                                child: ListTile(
-                                  leading: const Text(''),
-                                  title: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Center(
-                                          child: Text(
-                                            'User',
-                                            style: GoogleFonts.inter(
-                                              textStyle: const TextStyle(
-                                                color: Color(0xff202124),
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.normal,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Center(
-                                          child: Text(
-                                            'Date Created',
-                                            style: GoogleFonts.inter(
-                                              textStyle: const TextStyle(
-                                                color: Color(0xff202124),
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.normal,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Center(
-                                          child: Text(
-                                            'Account Status',
-                                            style: GoogleFonts.inter(
-                                              textStyle: const TextStyle(
-                                                color: Color(0xff202124),
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.normal,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: ListView.builder(
-                                  itemCount: 10,
-                                  itemBuilder: (BuildContext context, index) {
-                                    return Container(
-                                      color: index.isEven
-                                          ? Colors.white
-                                          : const Color(0xffFAFAFA),
-                                      child: ListTile(
-                                        leading: Text(
-                                          '${index + 1}.',
-                                          style: GoogleFonts.inter(
-                                              textStyle:
-                                                  const TextStyle(fontSize: 8)),
-                                        ),
-                                        title: Row(
-                                          children: [
-                                            Expanded(
-                                              child: Text(
-                                                '@username',
-                                                textAlign: TextAlign.center,
-                                                style: GoogleFonts.inter(
-                                                    textStyle: const TextStyle(
-                                                  fontSize: 12,
-                                                )),
-                                              ),
-                                            ),
-                                            Expanded(
-                                              child: Text(
-                                                DateTime.now().toString(),
-                                                textAlign: TextAlign.center,
-                                                style: GoogleFonts.inter(
-                                                    textStyle: const TextStyle(
-                                                  fontSize: 12,
-                                                )),
-                                              ),
-                                            ),
-                                            Expanded(
-                                              child: Text(
-                                                'Active',
-                                                textAlign: TextAlign.center,
-                                                style: GoogleFonts.inter(
-                                                    textStyle: const TextStyle(
-                                                  fontSize: 12,
-                                                )),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      // Padding(
+                      //   padding: const EdgeInsets.symmetric(
+                      //       horizontal: 16, vertical: 32),
+                      //   child: Divider(),
+                      // ),
+                      // Container(
+                      //   padding: const EdgeInsets.symmetric(
+                      //       vertical: 4, horizontal: 16),
+                      //   height: 56,
+                      //   width: double.infinity,
+                      //   child: Row(
+                      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //     children: [
+                      //       Padding(
+                      //         padding: const EdgeInsets.symmetric(
+                      //           vertical: 4,
+                      //         ),
+                      //         child: Text(
+                      //           'Admin (2)',
+                      //           style: GoogleFonts.inter(
+                      //               textStyle: const TextStyle(
+                      //                   color: Color(0xff202124),
+                      //                   fontSize: 16,
+                      //                   fontWeight: FontWeight.w500)),
+                      //         ),
+                      //       ),
+                      //       Container(
+                      //         width: 280,
+                      //         height: double.infinity,
+                      //         decoration: const BoxDecoration(
+                      //           color: Colors.white,
+                      //           border: Border(
+                      //             left: BorderSide(color: Color(0xffdadce0)),
+                      //             top: BorderSide(color: Color(0xffdadce0)),
+                      //             bottom: BorderSide(color: Color(0xffdadce0)),
+                      //             right: BorderSide(color: Color(0xffdadce0)),
+                      //           ),
+                      //           borderRadius: BorderRadius.zero,
+                      //         ),
+                      //         child: Row(
+                      //           children: [
+                      //             Expanded(
+                      //               child: Container(
+                      //                 padding: const EdgeInsets.symmetric(
+                      //                     horizontal: 4),
+                      //                 child: TextField(
+                      //                   // controller: searchDoc,
+                      //                   style: GoogleFonts.inter(
+                      //                     textStyle: const TextStyle(
+                      //                       color: Color(0xff202124),
+                      //                       fontSize: 12,
+                      //                     ),
+                      //                   ),
+                      //                   decoration: InputDecoration(
+                      //                     contentPadding:
+                      //                         const EdgeInsets.symmetric(
+                      //                             horizontal: 8),
+                      //                     focusedBorder: InputBorder.none,
+                      //                     enabledBorder: InputBorder.none,
+                      //                     hintText: 'Search user by email',
+                      //                     hintStyle: GoogleFonts.inter(
+                      //                       textStyle: const TextStyle(
+                      //                         color: Color(0xff202124),
+                      //                         fontSize: 12,
+                      //                       ),
+                      //                     ),
+                      //                   ),
+                      //                   cursorColor: const Color(0xff202124),
+                      //                 ),
+                      //               ),
+                      //             ),
+                      //             Container(
+                      //               decoration: const BoxDecoration(
+                      //                 border: Border(
+                      //                   left: BorderSide(
+                      //                       color: Color(0xffdadce0)),
+                      //                 ),
+                      //               ),
+                      //               child: IconButton(
+                      //                 icon: const Icon(Icons.search_rounded),
+                      //                 onPressed: () {
+                      //                   debugPrint('Search tapped');
+                      //                 },
+                      //               ),
+                      //             ),
+                      //           ],
+                      //         ),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
+                      // Padding(
+                      //   padding: const EdgeInsets.symmetric(
+                      //       vertical: 8, horizontal: 16),
+                      //   child: Container(
+                      //     height: 300,
+                      //     decoration: BoxDecoration(
+                      //       border: Border.all(
+                      //         width: 1,
+                      //         color: const Color(0xffdadce0),
+                      //       ),
+                      //     ),
+                      //     child: Column(
+                      //       mainAxisAlignment: MainAxisAlignment.center,
+                      //       children: [
+                      //         Container(
+                      //           alignment: Alignment.center,
+                      //           height: 44,
+                      //           decoration: const BoxDecoration(
+                      //             border: Border(
+                      //               bottom: BorderSide(
+                      //                 color: Color(0xffdadce0),
+                      //                 width: 1,
+                      //               ),
+                      //             ),
+                      //           ),
+                      //           child: ListTile(
+                      //             leading: const Text(''),
+                      //             title: Row(
+                      //               children: [
+                      //                 Expanded(
+                      //                   child: Center(
+                      //                     child: Text(
+                      //                       'User',
+                      //                       style: GoogleFonts.inter(
+                      //                         textStyle: const TextStyle(
+                      //                           color: Color(0xff202124),
+                      //                           fontSize: 14,
+                      //                           fontWeight: FontWeight.normal,
+                      //                         ),
+                      //                       ),
+                      //                     ),
+                      //                   ),
+                      //                 ),
+                      //                 Expanded(
+                      //                   child: Center(
+                      //                     child: Text(
+                      //                       'Date Created',
+                      //                       style: GoogleFonts.inter(
+                      //                         textStyle: const TextStyle(
+                      //                           color: Color(0xff202124),
+                      //                           fontSize: 14,
+                      //                           fontWeight: FontWeight.normal,
+                      //                         ),
+                      //                       ),
+                      //                     ),
+                      //                   ),
+                      //                 ),
+                      //                 Expanded(
+                      //                   child: Center(
+                      //                     child: Text(
+                      //                       'Account Status',
+                      //                       style: GoogleFonts.inter(
+                      //                         textStyle: const TextStyle(
+                      //                           color: Color(0xff202124),
+                      //                           fontSize: 14,
+                      //                           fontWeight: FontWeight.normal,
+                      //                         ),
+                      //                       ),
+                      //                     ),
+                      //                   ),
+                      //                 ),
+                      //               ],
+                      //             ),
+                      //           ),
+                      //         ),
+                      //         Expanded(
+                      //           child: ListView.builder(
+                      //             itemCount: 10,
+                      //             itemBuilder: (BuildContext context, index) {
+                      //               return Container(
+                      //                 color: index.isEven
+                      //                     ? Colors.white
+                      //                     : const Color(0xffFAFAFA),
+                      //                 child: ListTile(
+                      //                   leading: Text(
+                      //                     '${index + 1}.',
+                      //                     style: GoogleFonts.inter(
+                      //                         textStyle:
+                      //                             const TextStyle(fontSize: 8)),
+                      //                   ),
+                      //                   title: Row(
+                      //                     children: [
+                      //                       Expanded(
+                      //                         child: Text(
+                      //                           '@username',
+                      //                           textAlign: TextAlign.center,
+                      //                           style: GoogleFonts.inter(
+                      //                               textStyle: const TextStyle(
+                      //                             fontSize: 12,
+                      //                           )),
+                      //                         ),
+                      //                       ),
+                      //                       Expanded(
+                      //                         child: Text(
+                      //                           DateTime.now().toString(),
+                      //                           textAlign: TextAlign.center,
+                      //                           style: GoogleFonts.inter(
+                      //                               textStyle: const TextStyle(
+                      //                             fontSize: 12,
+                      //                           )),
+                      //                         ),
+                      //                       ),
+                      //                       Expanded(
+                      //                         child: Text(
+                      //                           'Active',
+                      //                           textAlign: TextAlign.center,
+                      //                           style: GoogleFonts.inter(
+                      //                               textStyle: const TextStyle(
+                      //                             fontSize: 12,
+                      //                           )),
+                      //                         ),
+                      //                       ),
+                      //                     ],
+                      //                   ),
+                      //                 ),
+                      //               );
+                      //             },
+                      //           ),
+                      //         ),
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
                       const SizedBox(
                         height: 32,
                       )

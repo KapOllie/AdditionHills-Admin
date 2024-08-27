@@ -1,5 +1,6 @@
 import 'package:barangay_adittion_hills_app/common/services/database_service.dart';
 import 'package:barangay_adittion_hills_app/common/widgets/column_field_text.dart';
+import 'package:barangay_adittion_hills_app/common/widgets/field_label/text_field.dart';
 import 'package:barangay_adittion_hills_app/common/widgets/textfield_validator/textfield_validators.dart';
 import 'package:barangay_adittion_hills_app/models/venue/event_venue.dart';
 import 'package:barangay_adittion_hills_app/presentation/events_place/widgets/edit_venue_dialog.dart';
@@ -19,12 +20,13 @@ class EventPlacePage extends StatefulWidget {
 }
 
 class _EventPlacePageState extends State<EventPlacePage> {
+  FieldLabel venueText = FieldLabel();
   final DatabaseService _databaseService = DatabaseService();
   bool isClicked = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: const Color(0xffE6E6E6),
+        backgroundColor: const Color(0xfff0ebf8),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -39,16 +41,7 @@ class _EventPlacePageState extends State<EventPlacePage> {
                 height: 100,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Event Venue',
-                      style: GoogleFonts.poppins(
-                          textStyle: const TextStyle(
-                              color: Color(0xff0a0a0a),
-                              fontSize: 24,
-                              fontWeight: FontWeight.w600)),
-                    ),
-                  ],
+                  children: [venueText.headText('Event Venue')],
                 ),
               ),
               const SizedBox(
@@ -160,7 +153,7 @@ class _EventPlacePageState extends State<EventPlacePage> {
                                             child: Text(
                                               eventVenue.venueName,
                                               textAlign: TextAlign.center,
-                                              style: GoogleFonts.poppins(
+                                              style: GoogleFonts.inter(
                                                 textStyle: const TextStyle(
                                                   color: Color(0xff0a0a0a),
                                                   fontSize: 12,
@@ -174,7 +167,7 @@ class _EventPlacePageState extends State<EventPlacePage> {
                                           child: Text(
                                             eventVenue.venueAddress,
                                             textAlign: TextAlign.center,
-                                            style: GoogleFonts.poppins(
+                                            style: GoogleFonts.inter(
                                               textStyle: const TextStyle(
                                                 color: Color(0xff0a0a0a),
                                                 fontSize: 12,
@@ -187,7 +180,7 @@ class _EventPlacePageState extends State<EventPlacePage> {
                                           child: Text(
                                             '0',
                                             textAlign: TextAlign.center,
-                                            style: GoogleFonts.poppins(
+                                            style: GoogleFonts.inter(
                                               textStyle: const TextStyle(
                                                 color: Color(0xff0a0a0a),
                                                 fontSize: 12,
@@ -200,7 +193,7 @@ class _EventPlacePageState extends State<EventPlacePage> {
                                           child: Text(
                                             eventVenue.venuePrice,
                                             textAlign: TextAlign.center,
-                                            style: GoogleFonts.poppins(
+                                            style: GoogleFonts.inter(
                                               textStyle: const TextStyle(
                                                 color: Color(0xff0a0a0a),
                                                 fontSize: 12,
@@ -221,7 +214,8 @@ class _EventPlacePageState extends State<EventPlacePage> {
                                                     editVenueDialogBox(
                                                         context,
                                                         _databaseService,
-                                                        eventVenueId);
+                                                        eventVenueId,
+                                                        eventVenue);
                                                   },
                                                   icon: Icon(Icons
                                                       .mode_edit_outline_rounded)),
@@ -284,7 +278,7 @@ class _EventPlacePageState extends State<EventPlacePage> {
           ),
           title: Text(
             'Are your sure?',
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.inter(
                 textStyle: const TextStyle(
                     color: Color(0xff0a0a0a), fontWeight: FontWeight.w600),
                 fontSize: 20),
@@ -292,7 +286,7 @@ class _EventPlacePageState extends State<EventPlacePage> {
           content: Text(
             'Do you really want to delete this venue?\nThis process cannot be undone.',
             textAlign: TextAlign.center,
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.inter(
                 textStyle: const TextStyle(
                     color: Color(0xff0a0a0a), fontWeight: FontWeight.w400),
                 fontSize: 12),

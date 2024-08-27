@@ -846,8 +846,8 @@ class DialogBox {
                                         child: ClipRRect(
                                           borderRadius:
                                               BorderRadius.circular(10),
-                                          child: Image.memory(
-                                            _newSelectedFile!,
+                                          child: Image.network(
+                                            _newUploadedImageUrl!,
                                             fit: BoxFit.contain,
                                           ),
                                         ),

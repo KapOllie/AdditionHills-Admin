@@ -23,44 +23,42 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xfff0ebf8),
-      body: SafeArea(
-        child: Row(
-          children: [
-            const Flexible(
-              flex: 2,
-              child: AdminSidemenu(),
+    return SizedBox(
+      width: double.infinity,
+      child: Row(
+        children: [
+          const Expanded(
+            flex: 2,
+            child: AdminSidemenu(),
+          ),
+          Expanded(
+            flex: 8,
+            child: BlocBuilder<AdminMenuItemBlocs, AdminMenuItemState>(
+              builder: (context, state) {
+                switch (state.index) {
+                  case 0:
+                    return const AdminDashboard();
+                  case 1:
+                    return const DocumentsPage();
+                  case 2:
+                    return const EventEquipmentPage();
+                  case 3:
+                    return const EventPlacePage();
+                  case 5:
+                    return const DocumentRequestPage();
+                  case 6:
+                    return AdminProfilePage(
+                      email: widget.email,
+                    );
+                  case 8:
+                    return const AccountsPage();
+                  default:
+                    return const Center(child: Text('Page not found'));
+                }
+              },
             ),
-            Flexible(
-              flex: 7,
-              child: BlocBuilder<AdminMenuItemBlocs, AdminMenuItemState>(
-                builder: (context, state) {
-                  switch (state.index) {
-                    case 0:
-                      return const AdminDashboard();
-                    case 1:
-                      return const AccountsPage();
-                    case 2:
-                      return const DocumentsPage();
-                    case 3:
-                      return const EventEquipmentPage();
-                    case 4:
-                      return const EventPlacePage();
-                    case 5:
-                      return const DocumentRequestPage();
-                    case 6:
-                      return AdminProfilePage(
-                        email: widget.email,
-                      );
-                    default:
-                      return const Center(child: Text('Page not found'));
-                  }
-                },
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -3,6 +3,7 @@
 import 'package:barangay_adittion_hills_app/common/services/database_service.dart';
 import 'package:barangay_adittion_hills_app/common/widgets/column_field_text.dart';
 import 'package:barangay_adittion_hills_app/common/widgets/common_widgets.dart';
+import 'package:barangay_adittion_hills_app/common/widgets/field_label/text_field.dart';
 import 'package:barangay_adittion_hills_app/common/widgets/textfield_validator/textfield_validators.dart';
 import 'package:barangay_adittion_hills_app/models/equipment/new_equipment.dart';
 import 'package:barangay_adittion_hills_app/presentation/documents/widgets/required_textfield.dart';
@@ -23,6 +24,7 @@ class EventEquipmentPage extends StatefulWidget {
 }
 
 class _EventEquipmentPageState extends State<EventEquipmentPage> {
+  FieldLabel equipmentText = FieldLabel();
   TextEditingController searchEquipment = TextEditingController();
   String searchQuery = '';
   final List<TextEditingController> listControllers = [TextEditingController()];
@@ -65,9 +67,7 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    headText('Event Equipment'),
-                  ],
+                  children: [equipmentText.headText('Event Equipment')],
                 ),
               ),
               const SizedBox(height: 10),
@@ -286,7 +286,7 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                                               () {
                                             // EDIT BUTTON
 
-                                            editItem(context, equipmentId,
+                                            updateItem(context, equipmentId,
                                                 newEquipment);
                                           }, const Color(0xff189877), 'Edit'),
                                           actionButton(
@@ -331,19 +331,13 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
   }
 
   void addNewItem(BuildContext context) {
-    final List hasNoRequirements = ["None"];
+    final List hasNoRequirements = ["none"];
     final Map<String, dynamic> hasNoPricingTable = {};
+    FieldLabel variable = FieldLabel();
 
-    Map<String, List<TextEditingController>> inputControllers = {
-      'listSetName': [TextEditingController()],
-      'listSetQuantity': [TextEditingController()],
-      'listSetPrice': [TextEditingController()],
-      'listRules': [TextEditingController()],
-    };
-
-    List<TextEditingController> listSetName = [TextEditingController()];
-    List<TextEditingController> listSetQuantity = [TextEditingController()];
-    List<TextEditingController> listSetPrice = [TextEditingController()];
+    List<TextEditingController> addSetNameList = [TextEditingController()];
+    List<TextEditingController> addListSetQuantity = [TextEditingController()];
+    List<TextEditingController> updateListSetPrice = [TextEditingController()];
     List<TextEditingController> listRules = [TextEditingController()];
     TextEditingController addItemName = TextEditingController();
     TextEditingController addItemDescription = TextEditingController();
@@ -361,13 +355,13 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
       for (var controller in addItemRequirements) {
         controller.dispose();
       }
-      for (var controller in listSetName) {
+      for (var controller in addSetNameList) {
         controller.dispose();
       }
-      for (var controller in listSetQuantity) {
+      for (var controller in addListSetQuantity) {
         controller.dispose();
       }
-      for (var controller in listSetPrice) {
+      for (var controller in updateListSetPrice) {
         controller.dispose();
       }
     }
@@ -640,7 +634,7 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                                     SizedBox(
                                       height: 200,
                                       child: ListView.builder(
-                                        itemCount: listSetPrice.length,
+                                        itemCount: updateListSetPrice.length,
                                         itemBuilder:
                                             (BuildContext context, index) {
                                           return Padding(
@@ -660,7 +654,7 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                                                                   FontWeight
                                                                       .normal)),
                                                       controller:
-                                                          listSetName[index],
+                                                          addSetNameList[index],
                                                       decoration:
                                                           InputDecoration(
                                                               fillColor:
@@ -687,7 +681,7 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                                                           onlyUnsignedNumbers(
                                                               4),
                                                       controller:
-                                                          listSetQuantity[
+                                                          addListSetQuantity[
                                                               index],
                                                       decoration:
                                                           InputDecoration(
@@ -715,7 +709,8 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                                                                   FontWeight
                                                                       .normal)),
                                                       controller:
-                                                          listSetPrice[index],
+                                                          updateListSetPrice[
+                                                              index],
                                                       decoration: InputDecoration(
                                                           prefixText: '₱ ',
                                                           prefixStyle: GoogleFonts.inter(
@@ -742,16 +737,14 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                                                       IconButton(
                                                           onPressed: () {
                                                             setState(() {
-                                                              inputControllers[
-                                                                      'listSetName']
-                                                                  ?.add(
+                                                              addSetNameList.add(
+                                                                  TextEditingController());
+                                                              addListSetQuantity
+                                                                  .add(
                                                                       TextEditingController());
-                                                              listSetName.add(
-                                                                  TextEditingController());
-                                                              listSetQuantity.add(
-                                                                  TextEditingController());
-                                                              listSetPrice.add(
-                                                                  TextEditingController());
+                                                              updateListSetPrice
+                                                                  .add(
+                                                                      TextEditingController());
                                                             });
                                                           },
                                                           icon: Icon(Icons
@@ -769,32 +762,32 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                                                             } else if (index >
                                                                 0) {
                                                               setState(() {
-                                                                listSetName[
+                                                                addSetNameList[
                                                                         index]
                                                                     .clear();
-                                                                listSetName[
+                                                                addSetNameList[
                                                                         index]
                                                                     .dispose();
-                                                                listSetQuantity[
+                                                                addListSetQuantity[
                                                                         index]
                                                                     .clear();
-                                                                listSetQuantity[
+                                                                addListSetQuantity[
                                                                         index]
                                                                     .dispose();
-                                                                listSetPrice[
+                                                                updateListSetPrice[
                                                                         index]
                                                                     .clear();
 
-                                                                listSetPrice[
+                                                                updateListSetPrice[
                                                                         index]
                                                                     .dispose();
-                                                                listSetName
+                                                                addSetNameList
                                                                     .removeAt(
                                                                         index);
-                                                                listSetQuantity
+                                                                addListSetQuantity
                                                                     .removeAt(
                                                                         index);
-                                                                listSetPrice
+                                                                updateListSetPrice
                                                                     .removeAt(
                                                                         index);
                                                               });
@@ -1313,24 +1306,29 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                                           Map<String, dynamic>
                                               generatePricingTable(
                                                   List<TextEditingController>
-                                                      listSetName,
+                                                      updateListSetName,
                                                   List<TextEditingController>
-                                                      listSetQuantity,
+                                                      updateListSetQuantity,
                                                   List<TextEditingController>
-                                                      listSetPrice) {
+                                                      updateListSetPrice) {
                                             Map<String, dynamic> pricingTable =
                                                 {};
                                             for (int i = 0;
-                                                i < listSetName.length;
+                                                i < updateListSetName.length;
                                                 i++) {
-                                              if (i < listSetQuantity.length &&
-                                                  i < listSetPrice.length) {
+                                              if (i <
+                                                      updateListSetQuantity
+                                                          .length &&
+                                                  i <
+                                                      updateListSetPrice
+                                                          .length) {
                                                 String name =
-                                                    listSetName[i].text;
+                                                    updateListSetName[i].text;
                                                 String quantity =
-                                                    listSetQuantity[i].text;
+                                                    updateListSetQuantity[i]
+                                                        .text;
                                                 String price =
-                                                    listSetPrice[i].text;
+                                                    updateListSetPrice[i].text;
 
                                                 int quantityInt =
                                                     int.tryParse(quantity) ?? 0;
@@ -1351,13 +1349,20 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
 
                                           Map<String, dynamic> pricingTable =
                                               generatePricingTable(
-                                                  listSetName,
-                                                  listSetQuantity,
-                                                  listSetPrice);
+                                                  addSetNameList,
+                                                  addListSetQuantity,
+                                                  updateListSetPrice);
+                                          List<dynamic> rulesListString = [];
+                                          for (var i = 0;
+                                              i < listRules.length;
+                                              i++) {
+                                            rulesListString[i] =
+                                                listRules[i].text;
+                                          }
 
                                           if (_formKey.currentState!
                                               .validate()) {
-                                            List<String> listControllerValue =
+                                            List<dynamic> listControllerValue =
                                                 addItemRequirements
                                                     .map((controller) =>
                                                         controller.text)
@@ -1365,20 +1370,23 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
 
                                             NewEquipment addNewEquipment =
                                                 NewEquipment(
-                                              itemName: addItemName.text,
-                                              itemDescription:
-                                                  addItemDescription.text,
-                                              itemQuantity:
-                                                  int.parse(addQuantity.text),
-                                              itemRequirements: hasReq
-                                                  ? listControllerValue
-                                                  : hasNoRequirements,
-                                              createdOn: Timestamp.now(),
-                                              lastUpdatedOn: Timestamp.now(),
-                                              pricingTable: hasPricingTable
-                                                  ? pricingTable
-                                                  : hasNoPricingTable,
-                                            );
+                                                    itemName: addItemName.text,
+                                                    itemDescription:
+                                                        addItemDescription.text,
+                                                    itemQuantity:
+                                                        int.parse(
+                                                            addQuantity.text),
+                                                    itemRequirements: hasReq
+                                                        ? listControllerValue
+                                                        : hasNoRequirements,
+                                                    createdOn: Timestamp.now(),
+                                                    lastUpdatedOn:
+                                                        Timestamp.now(),
+                                                    pricingTable:
+                                                        hasPricingTable
+                                                            ? pricingTable
+                                                            : hasNoPricingTable,
+                                                    rules: rulesListString);
 
                                             _databaseService
                                                 .addItem(addNewEquipment);
@@ -1453,6 +1461,7 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
 
   void viewItem(BuildContext context, NewEquipment newEquipment) {
     List viewRequirements = newEquipment.itemRequirements;
+
     final DateFormat monthYearFormat =
         DateFormat('EEEE, MMMM d, yyyy \'at\' h:mm a');
     showDialog(
@@ -1577,23 +1586,27 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
         });
   }
 
-  void editItem(
-      BuildContext context, String equipmentId, NewEquipment newEquip) {
-    bool hasPricingTable = newEquip.pricingTable.isEmpty ? false : true;
-    List sample = newEquip.itemRequirements;
-
-    List<TextEditingController> updateListSetPrice = newEquip
+  void updateItem(
+      BuildContext context, String equipmentId, NewEquipment updateEquipment) {
+    bool hasPricingTable = updateEquipment.pricingTable.isEmpty ? false : true;
+    bool hasRules = updateEquipment.rules.first != 'none' ? true : false;
+    List sample = updateEquipment.itemRequirements;
+    List<TextEditingController> rulesListController = List.generate(
+        updateEquipment.rules.length,
+        (index) => TextEditingController(text: updateEquipment.rules[index]));
+    List<TextEditingController> updateListSetPrice = updateEquipment
         .pricingTable.entries
         .map((entry) =>
             TextEditingController(text: entry.value['price']?.toString() ?? ''))
         .toList();
-
-    List<TextEditingController> updateListSetQuantity = newEquip
+    bool hasReq =
+        updateEquipment.itemRequirements.first == 'none' ? false : true;
+    List<TextEditingController> updateListSetQuantity = updateEquipment
         .pricingTable.entries
         .map((entry) => TextEditingController(
             text: entry.value['quantity']?.toString() ?? ''))
         .toList();
-    List<TextEditingController> updateListSetName = newEquip
+    List<TextEditingController> updateListSetName = updateEquipment
         .pricingTable.entries
         .map((entry) => TextEditingController(text: entry.key.toString()))
         .toList();
@@ -1603,15 +1616,15 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
     // debugPrint(sample2.length.toString());
     setState(() {
       for (var i = 0; i < sample.length; i++) {
-        sample2[i].text = newEquip.itemRequirements[i];
+        sample2[i].text = updateEquipment.itemRequirements[i];
       }
     });
     TextEditingController editItemName =
-        TextEditingController(text: newEquip.itemName);
+        TextEditingController(text: updateEquipment.itemName);
     TextEditingController editDescription =
-        TextEditingController(text: newEquip.itemDescription);
+        TextEditingController(text: updateEquipment.itemDescription);
     TextEditingController editQuantity =
-        TextEditingController(text: newEquip.itemQuantity.toString());
+        TextEditingController(text: updateEquipment.itemQuantity.toString());
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -1624,16 +1637,17 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                 builder: (BuildContext context, StateSetter setState) {
               return Container(
                 width: 600,
+                height: 500,
                 decoration: BoxDecoration(
                     color: Color(0xffE8E8EA),
                     borderRadius: BorderRadius.all(Radius.circular(4))),
                 child: SingleChildScrollView(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 16),
+                            horizontal: 16, vertical: 24),
                         child: SizedBox(
                           width: double.infinity,
                           child: Text(
@@ -1649,563 +1663,1017 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                           ),
                         ),
                       ),
-                      Form(
-                        key: _formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 2),
-                              child: textFieldLabel('Item Name', 12),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 4, left: 8, right: 8, bottom: 24),
-                              child: TextFormField(
-                                controller: editItemName,
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return "Item name cannot be empty!";
-                                  }
-                                  return null;
-                                },
-                                inputFormatters: [
-                                  LengthLimitingTextInputFormatter(42),
-                                ],
-                                cursorColor: const Color(0xff1D1929),
-                                style: GoogleFonts.inter(
-                                  textStyle: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal,
-                                    color: Color(0xff1B2533),
-                                  ),
-                                ),
-                                decoration: const InputDecoration(
-                                  fillColor: Color(0xfFFFFFFF),
-                                  filled: true,
-                                  border: OutlineInputBorder(),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide:
-                                        BorderSide(color: Color(0xffE8E8EA)),
-                                  ),
-                                  focusedBorder: InputBorder.none,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 2),
-                              child: textFieldLabel('Description', 12),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 8, horizontal: 8),
-                              child: TextFormField(
-                                controller: editDescription,
-                                maxLines: null,
-                                keyboardType: TextInputType.multiline,
-                                style: GoogleFonts.inter(
-                                  textStyle: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal,
-                                    color: Color(0xff1B2533),
-                                  ),
-                                ),
-                                decoration: const InputDecoration(
-                                  fillColor: Color(0xffffffff),
-                                  filled: true,
-                                  contentPadding: EdgeInsets.symmetric(
-                                      vertical: 30, horizontal: 8),
-                                  border: OutlineInputBorder(),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide:
-                                        BorderSide(color: Color(0xffE8E8EA)),
-                                  ),
-                                  focusedBorder: InputBorder.none,
-                                ),
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return "Description cannot be empty.";
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              child: textFieldLabel('Quantity', 12),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              child: TextFormField(
-                                controller: editQuantity,
-                                inputFormatters: onlyUnsignedNumbers(6),
-                                keyboardType: TextInputType.number,
-                                style: GoogleFonts.inter(
-                                  textStyle: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal,
-                                    color: Color(0xff1B2533),
-                                  ),
-                                ),
-                                decoration: const InputDecoration(
-                                  fillColor: Color(0xfFFFFFFF),
-                                  filled: true,
-                                  border: OutlineInputBorder(),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide:
-                                        BorderSide(color: Color(0xffE8E8EA)),
-                                  ),
-                                  focusedBorder: InputBorder.none,
-                                ),
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return "Quantity field cannot be empty";
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ),
-                            ListTile(
-                              title: Text(
-                                'Pricing Table',
-                                style: GoogleFonts.inter(
-                                  textStyle: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                              trailing: Transform.scale(
-                                scale: 0.75,
-                                child: Switch(
-                                    activeTrackColor: Colors.green,
-                                    activeColor: Colors.white,
-                                    value: hasPricingTable,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        hasPricingTable = value;
-                                        debugPrint(
-                                            'Has Pricing Table: $hasPricingTable');
-                                        if (!hasPricingTable) {
-                                          updateListSetName.clear();
-                                          updateListSetQuantity.clear();
-                                          updateListSetPrice.clear();
-                                        } else {
-                                          updateListSetName
-                                              .add(TextEditingController());
-                                          updateListSetQuantity
-                                              .add(TextEditingController());
-                                          updateListSetPrice
-                                              .add(TextEditingController());
-                                        }
-                                      });
-                                    }),
-                              ),
-                            ),
-                            if (hasPricingTable)
-                              Column(
-                                children: [
-                                  Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 8, horizontal: 16),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Container(
-                                              width: 100,
-                                              child: Text(
-                                                textAlign: TextAlign.center,
-                                                'Set',
-                                                style: GoogleFonts.inter(
-                                                    textStyle: TextStyle(
-                                                        fontSize: 14)),
-                                              )),
-                                          SizedBox(
-                                            width: 8,
-                                          ),
-                                          Container(
-                                              width: 100,
-                                              child: Text(
-                                                textAlign: TextAlign.center,
-                                                'Quantity',
-                                                style: GoogleFonts.inter(
-                                                    textStyle: TextStyle(
-                                                        fontSize: 14)),
-                                              )),
-                                          SizedBox(
-                                            width: 8,
-                                          ),
-                                          Container(
-                                              width: 100,
-                                              child: Text(
-                                                textAlign: TextAlign.center,
-                                                'Price',
-                                                style: GoogleFonts.inter(
-                                                    textStyle: TextStyle(
-                                                        fontSize: 14)),
-                                              )),
-                                          Container(
-                                            width: 100,
-                                            child: Text(
-                                              textAlign: TextAlign.center,
-                                              'Action',
-                                              style: GoogleFonts.inter(
-                                                  textStyle:
-                                                      TextStyle(fontSize: 14)),
-                                            ),
-                                          )
-                                        ],
-                                      )),
-                                  SizedBox(
-                                    height: 200,
-                                    child: ListView.builder(
-                                      itemCount: updateListSetName.length,
-                                      itemBuilder:
-                                          (BuildContext context, index) {
-                                        return Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 8, horizontal: 16),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Container(
-                                                  width: 100,
-                                                  child: TextFormField(
-                                                    controller:
-                                                        updateListSetName[
-                                                            index],
-                                                    decoration: InputDecoration(
-                                                        fillColor: Colors.white,
-                                                        filled: true,
-                                                        focusedBorder:
-                                                            InputBorder.none,
-                                                        enabledBorder:
-                                                            InputBorder.none),
-                                                  )),
-                                              SizedBox(width: 8),
-                                              Container(
-                                                  width: 100,
-                                                  child: TextFormField(
-                                                    controller:
-                                                        updateListSetQuantity[
-                                                            index],
-                                                    decoration: InputDecoration(
-                                                        fillColor: Colors.white,
-                                                        filled: true,
-                                                        focusedBorder:
-                                                            InputBorder.none,
-                                                        enabledBorder:
-                                                            InputBorder.none),
-                                                  )),
-                                              SizedBox(width: 8),
-                                              Container(
-                                                  width: 100,
-                                                  child: TextFormField(
-                                                    controller:
-                                                        updateListSetPrice[
-                                                            index],
-                                                    decoration: InputDecoration(
-                                                        fillColor: Colors.white,
-                                                        filled: true,
-                                                        focusedBorder:
-                                                            InputBorder.none,
-                                                        enabledBorder:
-                                                            InputBorder.none),
-                                                  )),
-                                              SizedBox(
-                                                width: 8,
-                                              ),
-                                              Container(
-                                                width: 100,
-                                                child: Row(
-                                                  children: [
-                                                    IconButton(
-                                                        onPressed: () {
-                                                          // setState(() {
-                                                          //   listSetName.add(
-                                                          //       TextEditingController());
-                                                          //   listSetQuantity.add(
-                                                          //       TextEditingController());
-                                                          //   listSetPrice.add(
-                                                          //       TextEditingController());
-                                                          // });
-                                                        },
-                                                        icon: Icon(
-                                                            Icons.add_circle)),
-                                                    SizedBox(
-                                                      width: 8,
-                                                    ),
-                                                    IconButton(
-                                                        onPressed: () {
-                                                          if (index == 0) {
-                                                            setState(() {
-                                                              hasPricingTable =
-                                                                  false;
-                                                            });
-                                                          } else if (index >
-                                                              0) {
-                                                            setState(() {
-                                                              // listSetName[
-                                                              //         index]
-                                                              //     .clear();
-                                                              // listSetQuantity[
-                                                              //         index]
-                                                              //     .clear();
-                                                              // listSetPrice[
-                                                              //         index]
-                                                              //     .clear();
-                                                              // listSetName[
-                                                              //         index]
-                                                              //     .dispose();
-                                                              // listSetQuantity[
-                                                              //         index]
-                                                              //     .dispose();
-                                                              // listSetPrice[
-                                                              //         index]
-                                                              //     .dispose();
-                                                              // listSetName
-                                                              //     .removeAt(
-                                                              //         index);
-                                                              // listSetQuantity
-                                                              //     .removeAt(
-                                                              //         index);
-                                                              // listSetPrice
-                                                              //     .removeAt(
-                                                              //         index);
-                                                            });
-                                                          }
-                                                        },
-                                                        icon: Icon(Icons
-                                                            .remove_circle)),
-                                                  ],
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        );
-                                      },
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 16, bottom: 16, left: 16),
+                                child: Text(
+                                  'Note: All fields marked with an asterisk (*) are required',
+                                  style: GoogleFonts.inter(
+                                    textStyle: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey.shade500,
                                     ),
                                   ),
-                                ],
-                              ),
-
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              child: textFieldLabel('Requirements', 12),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 8, right: 8, top: 4),
-                              child: Container(
-                                padding: EdgeInsetsDirectional.only(top: 8),
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: reqBorder),
-                                  color: Colors.white,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(4)),
                                 ),
-                                height: 150,
-                                child: ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: sample2.length,
-                                  itemBuilder: (context, index) {
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 8),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Expanded(
-                                            child: textFieldLabel(
-                                                'Requirement #${index + 1}',
-                                                12),
-                                          ),
-                                          Expanded(
-                                            flex: 3,
-                                            child: Container(
-                                              decoration: const BoxDecoration(
-                                                color: Color(0xfffafafa),
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(4)),
-                                              ),
-                                              child: Center(
-                                                child: TextFormField(
-                                                  validator: (value) {
-                                                    if (value!.isEmpty) {
-                                                      return "Minimun of 1 requirement is required.";
-                                                    }
-                                                    return null;
-                                                  },
-                                                  controller: sample2[index],
-                                                  style: GoogleFonts.inter(
-                                                    textStyle: const TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.normal,
-                                                      color: Color(0xff1B2533),
-                                                    ),
-                                                  ),
-                                                  decoration: InputDecoration(
-                                                    enabledBorder:
-                                                        InputBorder.none,
-                                                    focusedBorder:
-                                                        InputBorder.none,
-                                                    suffixIcon: IconButton(
-                                                      onPressed: () {
-                                                        setState(() {
-                                                          sample2[index]
-                                                              .clear();
-                                                          sample2[index]
-                                                              .dispose();
-                                                          sample2
-                                                              .removeAt(index);
-                                                          // Update border color based on listControllers length
-                                                          reqBorder =
-                                                              sample2.isEmpty
-                                                                  ? Colors.red
-                                                                  : Colors.grey;
-                                                        });
-                                                      },
-                                                      icon: const Icon(
-                                                        Icons.delete_rounded,
-                                                        color:
-                                                            Color(0xff8C8B92),
-                                                        size: 18,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(bottom: 8, left: 16),
+                                child: Text.rich(TextSpan(children: [
+                                  TextSpan(
+                                    text: '*',
+                                    style: GoogleFonts.inter(
+                                      textStyle: TextStyle(
+                                          color: Color(0xffDD3409),
+                                          fontSize: 14),
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: 'Item Name',
+                                    style: GoogleFonts.inter(
+                                        textStyle: TextStyle(
+                                            color: Color(0xff1B2533),
+                                            fontSize: 14),
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                ])),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 16, right: 16, bottom: 24),
+                                child: RequiredTextField(
+                                  hintText: 'Enter item name',
+                                  textController: editItemName,
+                                  maxLines: null,
+                                  isRequired: true,
+                                  inputFormatter: [
+                                    LengthLimitingTextInputFormatter(42)
+                                  ],
+                                  inputValidator: (value) {
+                                    if (value!.isEmpty) {
+                                      return "Item name is required";
+                                    }
+                                    return null;
                                   },
                                 ),
                               ),
-                            ),
-                            // ADD MORE REQUIREMENT BUTTON
 
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 16),
-                              child: Container(
-                                  width: double.infinity,
-                                  height: 40,
-                                  child: TextButton(
-                                    style: const ButtonStyle(),
-                                    onPressed: () {
+                              Padding(
+                                padding: EdgeInsets.only(bottom: 8, left: 16),
+                                child: Text.rich(TextSpan(children: [
+                                  TextSpan(
+                                    text: '*',
+                                    style: GoogleFonts.inter(
+                                      textStyle: TextStyle(
+                                          color: Color(0xffDD3409),
+                                          fontSize: 14),
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: 'Item Description',
+                                    style: GoogleFonts.inter(
+                                        textStyle: TextStyle(
+                                            color: Color(0xff1B2533),
+                                            fontSize: 14),
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                ])),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 16, right: 16, bottom: 24),
+                                child: RequiredTextField(
+                                  textController: editDescription,
+                                  maxLines: null,
+                                  isRequired: true,
+                                  inputValidator: (value) {
+                                    if (value!.isEmpty) {
+                                      return "Item description is required";
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(bottom: 8, left: 16),
+                                child: Text.rich(TextSpan(children: [
+                                  TextSpan(
+                                    text: '*',
+                                    style: GoogleFonts.inter(
+                                      textStyle: TextStyle(
+                                          color: Color(0xffDD3409),
+                                          fontSize: 14),
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: 'Item Quantity',
+                                    style: GoogleFonts.inter(
+                                        textStyle: TextStyle(
+                                            color: Color(0xff1B2533),
+                                            fontSize: 14),
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                ])),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    right: 16, left: 16, bottom: 16),
+                                child: RequiredTextField(
+                                  textController: editQuantity,
+                                  isRequired: true,
+                                  inputFormatter: onlyUnsignedNumbers(4),
+                                  inputValidator: (value) {
+                                    if (value!.isEmpty) {
+                                      return "Item quantity is required";
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 16, bottom: 16, left: 16),
+                                child: Text(
+                                  'Note: Leaving the switches below turned off will set the value to (None)',
+                                  style: GoogleFonts.inter(
+                                    textStyle: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey.shade500,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              ListTile(
+                                title: Text(
+                                  'Pricing Table',
+                                  style: GoogleFonts.inter(
+                                    textStyle: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                                trailing: Transform.scale(
+                                  scale: 0.75,
+                                  child: Switch(
+                                      activeTrackColor: Colors.green,
+                                      activeColor: Colors.white,
+                                      value: hasPricingTable,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          hasPricingTable = value;
+                                          debugPrint(
+                                              'Has Pricing Table: $hasPricingTable');
+                                          if (!hasPricingTable) {
+                                            updateListSetName.clear();
+                                            updateListSetQuantity.clear();
+                                            updateListSetPrice.clear();
+                                          } else {
+                                            updateListSetName
+                                                .add(TextEditingController());
+                                            updateListSetQuantity
+                                                .add(TextEditingController());
+                                            updateListSetPrice
+                                                .add(TextEditingController());
+                                          }
+                                        });
+                                      }),
+                                ),
+                              ),
+                              if (hasPricingTable)
+                                Column(
+                                  children: [
+                                    Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 8, horizontal: 16),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                                width: 100,
+                                                child: Text(
+                                                  textAlign: TextAlign.center,
+                                                  'Set',
+                                                  style: GoogleFonts.inter(
+                                                      textStyle: TextStyle(
+                                                          fontSize: 14)),
+                                                )),
+                                            SizedBox(
+                                              width: 8,
+                                            ),
+                                            Container(
+                                                width: 100,
+                                                child: Text(
+                                                  textAlign: TextAlign.center,
+                                                  'Quantity',
+                                                  style: GoogleFonts.inter(
+                                                      textStyle: TextStyle(
+                                                          fontSize: 14)),
+                                                )),
+                                            SizedBox(
+                                              width: 8,
+                                            ),
+                                            Container(
+                                                width: 100,
+                                                child: Text(
+                                                  textAlign: TextAlign.center,
+                                                  'Price',
+                                                  style: GoogleFonts.inter(
+                                                      textStyle: TextStyle(
+                                                          fontSize: 14)),
+                                                )),
+                                            Container(
+                                              width: 100,
+                                              child: Text(
+                                                textAlign: TextAlign.center,
+                                                'Action',
+                                                style: GoogleFonts.inter(
+                                                    textStyle: TextStyle(
+                                                        fontSize: 14)),
+                                              ),
+                                            )
+                                          ],
+                                        )),
+                                    SizedBox(
+                                      height: 200,
+                                      child: ListView.builder(
+                                        itemCount: updateListSetName.length,
+                                        itemBuilder:
+                                            (BuildContext context, index) {
+                                          return Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 8, horizontal: 16),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Container(
+                                                    width: 100,
+                                                    child: TextFormField(
+                                                      controller:
+                                                          updateListSetName[
+                                                              index],
+                                                      decoration:
+                                                          InputDecoration(
+                                                              fillColor:
+                                                                  Colors.white,
+                                                              filled: true,
+                                                              focusedBorder:
+                                                                  InputBorder
+                                                                      .none,
+                                                              enabledBorder:
+                                                                  InputBorder
+                                                                      .none),
+                                                    )),
+                                                SizedBox(width: 8),
+                                                Container(
+                                                    width: 100,
+                                                    child: TextFormField(
+                                                      controller:
+                                                          updateListSetQuantity[
+                                                              index],
+                                                      decoration:
+                                                          InputDecoration(
+                                                              fillColor:
+                                                                  Colors.white,
+                                                              filled: true,
+                                                              focusedBorder:
+                                                                  InputBorder
+                                                                      .none,
+                                                              enabledBorder:
+                                                                  InputBorder
+                                                                      .none),
+                                                    )),
+                                                SizedBox(width: 8),
+                                                Container(
+                                                    width: 100,
+                                                    child: TextFormField(
+                                                      controller:
+                                                          updateListSetPrice[
+                                                              index],
+                                                      decoration:
+                                                          InputDecoration(
+                                                              fillColor:
+                                                                  Colors.white,
+                                                              filled: true,
+                                                              focusedBorder:
+                                                                  InputBorder
+                                                                      .none,
+                                                              enabledBorder:
+                                                                  InputBorder
+                                                                      .none),
+                                                    )),
+                                                SizedBox(
+                                                  width: 8,
+                                                ),
+                                                Container(
+                                                  width: 100,
+                                                  child: Row(
+                                                    children: [
+                                                      IconButton(
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              updateListSetName.add(
+                                                                  TextEditingController());
+                                                              updateListSetQuantity
+                                                                  .add(
+                                                                      TextEditingController());
+                                                              updateListSetPrice
+                                                                  .add(
+                                                                      TextEditingController());
+                                                            });
+                                                          },
+                                                          icon: Icon(Icons
+                                                              .add_circle)),
+                                                      SizedBox(
+                                                        width: 8,
+                                                      ),
+                                                      IconButton(
+                                                          onPressed: () {
+                                                            if (index == 0) {
+                                                              setState(() {
+                                                                hasPricingTable =
+                                                                    false;
+                                                              });
+                                                            } else if (index >
+                                                                0) {
+                                                              setState(() {
+                                                                updateListSetName[
+                                                                        index]
+                                                                    .clear();
+                                                                updateListSetQuantity[
+                                                                        index]
+                                                                    .clear();
+                                                                updateListSetPrice[
+                                                                        index]
+                                                                    .clear();
+                                                                updateListSetName[
+                                                                        index]
+                                                                    .dispose();
+                                                                updateListSetQuantity[
+                                                                        index]
+                                                                    .dispose();
+                                                                updateListSetPrice[
+                                                                        index]
+                                                                    .dispose();
+                                                                updateListSetName
+                                                                    .removeAt(
+                                                                        index);
+                                                                updateListSetQuantity
+                                                                    .removeAt(
+                                                                        index);
+                                                                updateListSetPrice
+                                                                    .removeAt(
+                                                                        index);
+                                                              });
+                                                            }
+                                                          },
+                                                          icon: Icon(Icons
+                                                              .remove_circle)),
+                                                    ],
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ListTile(
+                                trailing: Transform.scale(
+                                  scale: 0.75,
+                                  child: Switch(
+                                    activeTrackColor: Colors.green,
+                                    activeColor: Colors.white,
+                                    value: hasReq,
+                                    onChanged: (value) {
                                       setState(() {
-                                        sample2.add(TextEditingController());
+                                        hasReq = value;
                                       });
                                     },
-                                    child: const Text('Add more requirements'),
-                                  )),
-                            ),
-
-                            // CANCEL BUTTON
-
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 16),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: InkWell(
-                                      onTap: () {
-                                        sample2.clear();
-                                        Navigator.pop(context);
-                                        sample2.add(TextEditingController());
-                                        setState(() {
-                                          reqBorder = Colors.transparent;
-                                        });
-                                      },
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        width: double.infinity,
-                                        height: 40,
-                                        decoration: const BoxDecoration(
-                                            color: Color(0xfffb9481),
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(4))),
-                                        child: Text(
-                                          'CANCEL',
-                                          style: GoogleFonts.inter(
-                                              textStyle: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w400)),
-                                        ),
+                                  ),
+                                ),
+                                title: Text(
+                                  'Requirements',
+                                  style: GoogleFonts.inter(
+                                    textStyle: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              if (hasReq)
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 16, right: 16, top: 4),
+                                  child: Container(
+                                    padding: EdgeInsetsDirectional.only(top: 8),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                          width: 1, color: Color(0XFF8E99AA)),
+                                      borderRadius: BorderRadius.zero,
+                                    ),
+                                    height: 200,
+                                    child: SingleChildScrollView(
+                                      child: Column(
+                                        children: [
+                                          ListView.builder(
+                                            shrinkWrap: true,
+                                            itemCount: sample2.length,
+                                            itemBuilder: (context, index) {
+                                              return Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 16,
+                                                        vertical: 8),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Expanded(
+                                                      flex: 3,
+                                                      child: Container(
+                                                        decoration:
+                                                            const BoxDecoration(
+                                                          color:
+                                                              Color(0xfffafafa),
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          4)),
+                                                        ),
+                                                        child: Center(
+                                                          child: TextFormField(
+                                                            validator: (value) {
+                                                              if (value!
+                                                                  .isEmpty) {
+                                                                return "Minimun of 1 requirement is required.";
+                                                              }
+                                                              return null;
+                                                            },
+                                                            controller:
+                                                                sample2[index],
+                                                            style: GoogleFonts
+                                                                .inter(
+                                                              textStyle:
+                                                                  const TextStyle(
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .normal,
+                                                                color: Color(
+                                                                    0xff1B2533),
+                                                              ),
+                                                            ),
+                                                            decoration:
+                                                                InputDecoration(
+                                                              prefixStyle: GoogleFonts.inter(
+                                                                  textStyle:
+                                                                      TextStyle(
+                                                                          fontSize:
+                                                                              10)),
+                                                              prefixText:
+                                                                  '${index + 1}. ',
+                                                              enabledBorder: OutlineInputBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .zero,
+                                                                  borderSide: BorderSide(
+                                                                      color: Color(
+                                                                          0XFF8E99AA),
+                                                                      width:
+                                                                          1)),
+                                                              errorBorder: OutlineInputBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .zero,
+                                                                  borderSide: BorderSide(
+                                                                      color: Color(
+                                                                          0xffE45D3A),
+                                                                      width:
+                                                                          1)),
+                                                              focusedBorder: OutlineInputBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .zero,
+                                                                  borderSide: BorderSide(
+                                                                      color: Color(
+                                                                          0XFF8E99AA),
+                                                                      width:
+                                                                          1.75)),
+                                                              suffixIcon:
+                                                                  IconButton(
+                                                                onPressed: () {
+                                                                  setState(() {
+                                                                    if (index ==
+                                                                        0) {
+                                                                      setState(
+                                                                          () {
+                                                                        hasReq =
+                                                                            false;
+                                                                      });
+                                                                    } else if (index >
+                                                                        0) {
+                                                                      sample2[index]
+                                                                          .clear();
+                                                                      sample2[index]
+                                                                          .dispose();
+                                                                      sample2.removeAt(
+                                                                          index);
+                                                                    }
+                                                                  });
+                                                                },
+                                                                icon:
+                                                                    const Icon(
+                                                                  Icons
+                                                                      .delete_rounded,
+                                                                  color: Color(
+                                                                      0xffE45D3A),
+                                                                  size: 18,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 16, vertical: 16),
+                                            child: Container(
+                                              width: double.infinity,
+                                              height: 40,
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      width: 1,
+                                                      color:
+                                                          Color(0XFF8E99AA))),
+                                              child: InkWell(
+                                                onTap: () {
+                                                  setState(() {
+                                                    sample2.add(
+                                                        TextEditingController());
+                                                  });
+                                                },
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Icon(
+                                                      Icons.add_circle_rounded,
+                                                      size: 18,
+                                                    ),
+                                                    SizedBox(
+                                                      width: 8,
+                                                    ),
+                                                    Text(
+                                                      'Add more requirement',
+                                                      style: GoogleFonts.inter(
+                                                          textStyle: TextStyle(
+                                                              fontSize: 12,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500)),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(
-                                    width: 10,
+                                ),
+                              ListTile(
+                                trailing: Transform.scale(
+                                  scale: 0.75,
+                                  child: Switch(
+                                    activeTrackColor: Colors.green,
+                                    activeColor: Colors.white,
+                                    value: hasRules,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        hasRules = value;
+                                      });
+                                    },
                                   ),
+                                ),
+                                title: Text(
+                                  'Rules',
+                                  style: GoogleFonts.inter(
+                                    textStyle: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              if (hasRules)
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 16, right: 16, top: 4),
+                                  child: Container(
+                                    padding: const EdgeInsetsDirectional.only(
+                                        top: 8),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                          width: 1, color: Color(0XFF8E99AA)),
+                                      borderRadius: BorderRadius.zero,
+                                    ),
+                                    height: 200,
+                                    child: SingleChildScrollView(
+                                      child: Column(
+                                        children: [
+                                          ListView.builder(
+                                            shrinkWrap: true,
+                                            itemCount:
+                                                rulesListController.length,
+                                            itemBuilder: (context, index) {
+                                              return Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 16,
+                                                        vertical: 8),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Expanded(
+                                                      flex: 3,
+                                                      child: Container(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: Colors.white,
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          4)),
+                                                        ),
+                                                        child: Center(
+                                                          child: TextFormField(
+                                                            validator: (value) {
+                                                              if (value!
+                                                                  .isEmpty) {
+                                                                return ".";
+                                                              }
+                                                              return null;
+                                                            },
+                                                            controller:
+                                                                rulesListController[
+                                                                    index],
+                                                            style: GoogleFonts
+                                                                .inter(
+                                                              textStyle:
+                                                                  const TextStyle(
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .normal,
+                                                                color: Color(
+                                                                    0xff1B2533),
+                                                              ),
+                                                            ),
+                                                            decoration:
+                                                                InputDecoration(
+                                                              contentPadding:
+                                                                  EdgeInsets.only(
+                                                                      left: 16),
+                                                              prefixStyle: GoogleFonts.inter(
+                                                                  textStyle:
+                                                                      TextStyle(
+                                                                          fontSize:
+                                                                              10)),
+                                                              prefixText:
+                                                                  '${index + 1}. ',
+                                                              enabledBorder: OutlineInputBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .zero,
+                                                                  borderSide: BorderSide(
+                                                                      color: Color(
+                                                                          0XFF8E99AA),
+                                                                      width:
+                                                                          1)),
+                                                              errorBorder: OutlineInputBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .zero,
+                                                                  borderSide: BorderSide(
+                                                                      color: Color(
+                                                                          0xffE45D3A),
+                                                                      width:
+                                                                          1)),
+                                                              focusedBorder: OutlineInputBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .zero,
+                                                                  borderSide: BorderSide(
+                                                                      color: Color(
+                                                                          0XFF8E99AA),
+                                                                      width:
+                                                                          1.75)),
+                                                              suffixIcon:
+                                                                  IconButton(
+                                                                onPressed: () {
+                                                                  setState(() {
+                                                                    if (index ==
+                                                                        0) {
+                                                                      setState(
+                                                                          () {
+                                                                        hasRules =
+                                                                            false;
+                                                                      });
+                                                                    } else if (index >
+                                                                        0) {
+                                                                      rulesListController[
+                                                                              index]
+                                                                          .clear();
+                                                                      rulesListController[
+                                                                              index]
+                                                                          .dispose();
+                                                                      rulesListController
+                                                                          .removeAt(
+                                                                              index);
+                                                                    }
+                                                                  });
+                                                                },
+                                                                icon:
+                                                                    const Icon(
+                                                                  Icons
+                                                                      .delete_rounded,
+                                                                  color: Color(
+                                                                      0xffE45D3A),
+                                                                  size: 18,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 16, vertical: 16),
+                                            child: Container(
+                                              width: double.infinity,
+                                              height: 40,
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      width: 1,
+                                                      color:
+                                                          Color(0XFF8E99AA))),
+                                              child: InkWell(
+                                                onTap: () {
+                                                  setState(() {
+                                                    rulesListController.add(
+                                                        TextEditingController());
+                                                  });
+                                                },
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Icon(
+                                                      Icons.add_circle_rounded,
+                                                      size: 18,
+                                                    ),
+                                                    SizedBox(
+                                                      width: 8,
+                                                    ),
+                                                    Text(
+                                                      'Add more rules',
+                                                      style: GoogleFonts.inter(
+                                                          textStyle: TextStyle(
+                                                              fontSize: 12,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500)),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
 
-                                  // ADD BUTTON
+                              // CANCEL BUTTON
 
-                                  Expanded(
-                                    child: InkWell(
-                                      child: Container(
-                                        height: 40,
-                                        decoration: const BoxDecoration(
-                                            color: Color(0xff73dae3),
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(4))),
-                                        alignment: Alignment.center,
-                                        child: Text('EDIT',
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 16),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: InkWell(
+                                        onTap: () {
+                                          sample2.clear();
+                                          Navigator.pop(context);
+                                          sample2.add(TextEditingController());
+                                          setState(() {
+                                            reqBorder = Colors.transparent;
+                                          });
+                                        },
+                                        child: Container(
+                                          alignment: Alignment.center,
+                                          width: double.infinity,
+                                          height: 40,
+                                          decoration: const BoxDecoration(
+                                              color: Color(0xfffb9481),
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(4))),
+                                          child: Text(
+                                            'CANCEL',
                                             style: GoogleFonts.inter(
                                                 textStyle: const TextStyle(
                                                     color: Colors.white,
                                                     fontSize: 16,
                                                     fontWeight:
-                                                        FontWeight.w400))),
+                                                        FontWeight.w400)),
+                                          ),
+                                        ),
                                       ),
-                                      onTap: () {
-                                        _formKey.currentState!.validate();
-                                        List sample3 = List.generate(
-                                            sample2.length, (index) => "");
-
-                                        for (var i = 0;
-                                            i < sample2.length;
-                                            i++) {
-                                          sample3[i] = sample2[i].text;
-                                        }
-
-                                        if (_formKey.currentState!.validate()) {
-                                          NewEquipment updatedEquipment =
-                                              newEquip.copyWith(
-                                                  itemName: editItemName.text,
-                                                  itemDescription:
-                                                      editDescription.text,
-                                                  itemQuantity: int.parse(
-                                                      editQuantity.text),
-                                                  itemRequirements: sample3,
-                                                  lastUpdatedOn:
-                                                      Timestamp.now(),
-                                                  createdOn:
-                                                      newEquip.createdOn);
-
-                                          _databaseService.updateItem(
-                                              equipmentId, updatedEquipment);
-                                        }
-                                      },
                                     ),
-                                  )
-                                ],
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+
+                                    // ADD BUTTON
+
+                                    Expanded(
+                                      child: InkWell(
+                                        child: Container(
+                                          height: 40,
+                                          decoration: const BoxDecoration(
+                                              color: Color(0xff73dae3),
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(4))),
+                                          alignment: Alignment.center,
+                                          child: Text('Update',
+                                              style: GoogleFonts.inter(
+                                                  textStyle: const TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w400))),
+                                        ),
+                                        onTap: () async {
+                                          // Validate the form
+                                          if (_formKey.currentState!
+                                              .validate()) {
+                                            List<String> sample3 =
+                                                List.generate(sample2.length,
+                                                    (index) => "");
+
+                                            // Collect values from the form fields
+                                            for (var i = 0;
+                                                i < sample2.length;
+                                                i++) {
+                                              sample3[i] = sample2[i].text;
+                                            }
+
+                                            Map<String, dynamic>
+                                                updatePricingTable(
+                                                    List<TextEditingController>
+                                                        updateListSetName,
+                                                    List<TextEditingController>
+                                                        updateListSetQuantity,
+                                                    List<TextEditingController>
+                                                        updateListSetPrice) {
+                                              Map<String, dynamic>
+                                                  pricingTable = {};
+                                              for (var i = 0;
+                                                  i < updateListSetName.length;
+                                                  i++) {
+                                                if (i <
+                                                        updateListSetQuantity
+                                                            .length &&
+                                                    i <
+                                                        updateListSetPrice
+                                                            .length) {
+                                                  String name =
+                                                      updateListSetName[i].text;
+                                                  String quantity =
+                                                      updateListSetQuantity[i]
+                                                          .text;
+                                                  String price =
+                                                      updateListSetPrice[i]
+                                                          .text;
+
+                                                  int quantityInt =
+                                                      int.tryParse(quantity) ??
+                                                          0;
+                                                  double priceDouble =
+                                                      double.tryParse(price) ??
+                                                          0.0;
+
+                                                  pricingTable[name] = {
+                                                    'quantity': quantityInt,
+                                                    'price': priceDouble,
+                                                  };
+                                                }
+                                              }
+                                              return pricingTable;
+                                            }
+
+                                            Map<String, dynamic>
+                                                updatedPricingTable =
+                                                updatePricingTable(
+                                                    updateListSetName,
+                                                    updateListSetQuantity,
+                                                    updateListSetPrice);
+
+                                            // Create the updated equipment object
+                                            NewEquipment updatedEquipment =
+                                                updateEquipment.copyWith(
+                                              itemName: editItemName.text,
+                                              itemDescription:
+                                                  editDescription.text,
+                                              itemQuantity:
+                                                  int.parse(editQuantity.text),
+                                              itemRequirements: sample3,
+                                              lastUpdatedOn: Timestamp.now(),
+                                              createdOn:
+                                                  updateEquipment.createdOn,
+                                              pricingTable: updatedPricingTable,
+                                            );
+
+                                            try {
+                                              // Update the item in the database
+                                              await _databaseService.updateItem(
+                                                  equipmentId,
+                                                  updatedEquipment);
+                                              Navigator.pop(context);
+                                              // Show success Snackbar
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                      'Item updated successfully!'),
+                                                  backgroundColor: Colors.green,
+                                                ),
+                                              );
+                                            } catch (e) {
+                                              // Show error Snackbar
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                      'Failed to update item: $e'),
+                                                  backgroundColor: Colors.red,
+                                                ),
+                                              );
+                                            }
+                                          } else {
+                                            // Show error Snackbar if form validation fails
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                    'Please correct the errors in the form.'),
+                                                backgroundColor: Colors.orange,
+                                              ),
+                                            );
+                                          }
+                                        },
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       )
                     ],
@@ -2226,16 +2694,5 @@ Widget actionButton(Icon buttonIcon, void Function()? onPressed,
     iconSize: 24,
     color: iconColor,
     onPressed: onPressed,
-  );
-}
-
-Widget textFieldLabel(String fieldText, double textSize) {
-  return Text(
-    fieldText,
-    style: GoogleFonts.inter(
-        textStyle: TextStyle(
-            fontSize: textSize,
-            fontWeight: FontWeight.w600,
-            color: const Color(0xff1B2533))),
   );
 }

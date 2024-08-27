@@ -63,7 +63,7 @@ class _SignupPageState extends State<SignupPage> {
             birthday: _birthday.text,
             address: _address.text,
             contact: _phoneNumber.text,
-            userType: "client");
+            userType: "admin");
 
         bool success = await _databaseService.addUsers(newUser, _email.text);
 

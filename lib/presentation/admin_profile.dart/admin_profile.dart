@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:barangay_adittion_hills_app/common/widgets/common_widgets.dart';
+import 'package:barangay_adittion_hills_app/common/widgets/field_label/text_field.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ class AdminProfilePage extends StatefulWidget {
 }
 
 class _AdminProfilePageState extends State<AdminProfilePage> {
+  FieldLabel profileText = FieldLabel();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,9 +36,7 @@ class _AdminProfilePageState extends State<AdminProfilePage> {
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                headText('Profile'),
-              ],
+              children: [profileText.headText('My Profile')],
             ),
           ),
           Expanded(

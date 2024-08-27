@@ -2,44 +2,51 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AdminDrawerListTile extends StatelessWidget {
-  const AdminDrawerListTile(
-      {super.key,
-      required this.padding,
-      required this.listTileTitle,
-      required this.onTap,
-      this.tileIcon,
-      required this.fontSize,
-      this.textColor,
-      this.hoverColor});
   final String listTileTitle;
-  final Icon? tileIcon;
-  final Function()? onTap;
-  final double padding;
+  final VoidCallback onTap;
+  final Color textColor;
   final double fontSize;
-  final Color? textColor;
-  final Color? hoverColor;
+  final double padding;
+  final Icon? tileIcon;
+  final bool selected;
+
+  const AdminDrawerListTile({
+    super.key,
+    required this.listTileTitle,
+    required this.onTap,
+    required this.textColor,
+    required this.fontSize,
+    required this.padding,
+    this.tileIcon,
+    this.selected = false,
+  });
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      child: ListTile(
-        hoverColor: hoverColor,
-        title: Padding(
-          padding: EdgeInsets.only(left: padding),
-          child: Text(
-            listTileTitle,
-            style: GoogleFonts.inter(
-                textStyle: TextStyle(
-              color: textColor,
-              fontWeight: FontWeight.w400,
-              fontSize: fontSize,
-            )),
+    return ListTile(
+      selected: selected,
+      leading: tileIcon != null
+          ? Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: Icon(
+                tileIcon!.icon,
+                color: selected ? Colors.white : Color(0xff1B2533),
+              ),
+            )
+          : null,
+      title: Text(
+        listTileTitle,
+        style: GoogleFonts.inter(
+          textStyle: TextStyle(
+            color: selected ? Colors.white : textColor,
+            fontSize: fontSize,
+            fontWeight: FontWeight.w500,
           ),
         ),
-        onTap: onTap,
-        leading: tileIcon,
-        iconColor: Colors.white,
       ),
+      onTap: onTap,
+      contentPadding: EdgeInsets.symmetric(horizontal: padding),
+      selectedTileColor: Color(0xff6B3CEB),
     );
   }
 }
