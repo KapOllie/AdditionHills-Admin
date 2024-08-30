@@ -5,7 +5,7 @@ class Document {
   String description;
   Timestamp createdOn;
   Timestamp lastModifiedOn;
-  String price;
+  double fee;
   String imageUrl;
   List<dynamic> docRequirements;
 
@@ -14,7 +14,7 @@ class Document {
       required this.description,
       required this.createdOn,
       required this.lastModifiedOn,
-      required this.price,
+      required this.fee,
       required this.imageUrl,
       required this.docRequirements});
 
@@ -24,7 +24,7 @@ class Document {
             description: json['description'] as String,
             createdOn: json['createdOn']! as Timestamp,
             lastModifiedOn: json['lastModifiedOn']! as Timestamp,
-            price: json['price'] as String,
+            fee: json['fee'] as double,
             imageUrl: json['imageUrl'] as String,
             docRequirements: json['docRequirements'] as List<dynamic>);
 
@@ -33,7 +33,7 @@ class Document {
       String? description,
       Timestamp? createdOn,
       Timestamp? lastModifiedOn,
-      String? price,
+      double? fee,
       String? imageUrl,
       List<dynamic>? docRequirements}) {
     return Document(
@@ -41,7 +41,7 @@ class Document {
         description: description ?? this.description,
         createdOn: createdOn ?? this.createdOn,
         lastModifiedOn: lastModifiedOn ?? this.lastModifiedOn,
-        price: price ?? this.price,
+        fee: fee ?? this.fee,
         imageUrl: imageUrl ?? this.imageUrl,
         docRequirements: docRequirements ?? this.docRequirements);
   }
@@ -52,7 +52,7 @@ class Document {
       'description': description,
       'createdOn': createdOn,
       'lastModifiedOn': lastModifiedOn,
-      'price': price,
+      'fee': fee,
       'imageUrl': imageUrl,
       'docRequirements': docRequirements
     };

@@ -3,6 +3,7 @@ import 'package:barangay_adittion_hills_app/models/document_requests/document_re
 import 'package:barangay_adittion_hills_app/models/equipment/new_equipment.dart';
 import 'package:barangay_adittion_hills_app/models/user/user_web.dart';
 import 'package:barangay_adittion_hills_app/models/venue/event_venue.dart';
+import 'package:barangay_adittion_hills_app/models/venue_requests/venue_requests_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 const String DOC_COLLECTION_REF = "documents";
@@ -17,8 +18,14 @@ const String REGISTERED_CLIENT_COLLECTION_REF = "registered_client";
 
 const String APP_USERS_COLLECTION_REF = 'users';
 
+const String VENUE_REQUESTS_REF = 'venue_requests';
+
+const String EQUIPMENT_REQUESTS_REF = 'equipment_requests';
+
 class DatabaseService {
   final _firestore = FirebaseFirestore.instance;
+  late final CollectionReference _equipmentRequests;
+  late final CollectionReference _venueRequestCollection;
   late final CollectionReference _docsRef;
   late final CollectionReference _itemRef;
   late final CollectionReference _venueRef;
@@ -30,7 +37,7 @@ class DatabaseService {
       .doc('app_users')
       .collection('app_users');
   DatabaseService() {
-    _appUser = _firestore
+    _equipmentRequests = _appUser = _firestore
         .collection(APP_USERS_COLLECTION_REF)
         .withConverter<UserWeb>(
             fromFirestore: (snapshots, _) =>
@@ -64,6 +71,13 @@ class DatabaseService {
             fromFirestore: (snapshots, _) =>
                 NewEquipment.fromJson(snapshots.data()!),
             toFirestore: (newEquipment, _) => newEquipment.toJson());
+
+    _venueRequestCollection = _firestore
+        .collection(VENUE_REQUESTS_REF)
+        .withConverter<VenueRequestsModel>(
+            fromFirestore: (snapshots, _) =>
+                VenueRequestsModel.fromJson(snapshots.data()!),
+            toFirestore: (venueRequest, _) => venueRequest.toJson());
 
     _docReqRef = _firestore
         .collection(DOCREQ_COLLECTION_REF)
@@ -123,6 +137,10 @@ class DatabaseService {
     return _itemRef.snapshots();
   }
 
+  Stream<QuerySnapshot> fetchVenueRequests() {
+    return _venueRequestCollection.snapshots();
+  }
+
   Future<bool> updateItem(String itemId, NewEquipment newEquip) async {
     try {
       await _itemRef.doc(itemId).update(newEquip.toJson());
@@ -152,9 +170,40 @@ class DatabaseService {
     return _docReqRef.snapshots();
   }
 
+  Future<bool> deleteDocReq(String id, DocumentRequest docReq) async {
+    try {
+      await _docReqRef.doc(id).delete();
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   void updateDocumentRequest(String docReqId, DocumentRequest docReq) {
     _docReqRef.doc(docReqId).update(docReq.toJson());
   }
+
+  Future<bool> updateVenueRequest(String id, VenueRequestsModel model) async {
+    try {
+      await _venueRequestCollection.doc(id).update(model.toJson());
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> deleteVenueRequest(String id) async {
+    try {
+      await _venueRequestCollection.doc(id).delete();
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // void deleteVenueRequest(String id) {
+  //   _venueRequestCollection.doc(id).delete();
+  // }
 
   Stream<QuerySnapshot> getVenues() {
     return _venueRef.snapshots();

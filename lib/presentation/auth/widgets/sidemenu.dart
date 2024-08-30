@@ -130,8 +130,9 @@ class _AdminSidemenuState extends State<AdminSidemenu> {
                     fontSize: 14,
                     padding: 28,
                     listTileTitle: 'Announcements',
+                    selected: state.index == 4,
                     onTap: () {
-                      // bloc.add(NavigateToEvent(4));
+                      bloc.add(NavigateToEvent(4));
                     },
                   ),
                   Padding(
@@ -172,8 +173,9 @@ class _AdminSidemenuState extends State<AdminSidemenu> {
                     fontSize: 14,
                     padding: 28,
                     listTileTitle: 'Venue Requests',
+                    selected: state.index == 6,
                     onTap: () {
-                      // bloc.add(NavigateToEvent(3));
+                      bloc.add(NavigateToEvent(6));
                     },
                   ),
                   AdminDrawerListTile(
@@ -181,8 +183,9 @@ class _AdminSidemenuState extends State<AdminSidemenu> {
                     fontSize: 14,
                     padding: 28,
                     listTileTitle: 'Event Equipment Requests',
+                    selected: state.index == 7,
                     onTap: () {
-                      // bloc.add(NavigateToEvent(3));
+                      bloc.add(NavigateToEvent(7));
                     },
                   ),
                   Padding(
@@ -213,8 +216,9 @@ class _AdminSidemenuState extends State<AdminSidemenu> {
                     fontSize: 14,
                     padding: 0,
                     listTileTitle: 'My Profile',
+                    selected: state.index == 8,
                     onTap: () {
-                      bloc.add(NavigateToEvent(6));
+                      bloc.add(NavigateToEvent(8));
                     },
                     tileIcon: Icon(
                       Icons.account_circle_rounded,

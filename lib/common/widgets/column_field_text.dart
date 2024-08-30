@@ -14,9 +14,9 @@ class ColumnFieldText extends StatelessWidget {
       fieldText,
       style: GoogleFonts.inter(
         textStyle: TextStyle(
-            color: Color(0xff0a0a0a),
+            color: Color(0xff1B2533),
             fontSize: 14,
-            fontWeight: FontWeight.w400),
+            fontWeight: FontWeight.w500),
       ),
     );
   }

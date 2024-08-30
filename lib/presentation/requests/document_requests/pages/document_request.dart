@@ -2,9 +2,11 @@ import 'package:barangay_adittion_hills_app/common/services/database_service.dar
 import 'package:barangay_adittion_hills_app/common/widgets/column_field_text.dart';
 import 'package:barangay_adittion_hills_app/models/document_requests/document_request.dart';
 import 'package:barangay_adittion_hills_app/presentation/equipment/pages/equipment_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 class DocumentRequestPage extends StatefulWidget {
   const DocumentRequestPage({super.key});
@@ -37,12 +39,33 @@ class _DocumentRequestPageState extends State<DocumentRequestPage> {
                 children: [
                   Text(
                     'Document Requests',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.inter(
                         textStyle: const TextStyle(
-                            color: Color(0xff0a0a0a),
+                            color: Color(0xff1B2533),
                             fontSize: 24,
                             fontWeight: FontWeight.w600)),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: InkWell(
+                      onTap: () {},
+                      child: Container(
+                        width: 200,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: Color(0xff017EF3),
+                        ),
+                        child: Center(
+                          child: Text(
+                            '+ New Document Request',
+                            style: GoogleFonts.inter(
+                                textStyle: TextStyle(
+                                    color: Colors.white, fontSize: 14)),
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
                 ],
               ),
             ),
@@ -64,10 +87,14 @@ class _DocumentRequestPageState extends State<DocumentRequestPage> {
                       child: ListTile(
                         title: Row(
                           children: [
-                            Expanded(child: ColumnFieldText(fieldText: 'User')),
+                            Expanded(
+                                child: ColumnFieldText(fieldText: 'Sender')),
                             Expanded(
                                 child: ColumnFieldText(
                                     fieldText: 'Date Requested')),
+                            Expanded(
+                                child:
+                                    ColumnFieldText(fieldText: 'Pickup Date')),
                             Expanded(
                                 child: ColumnFieldText(
                                     fieldText: 'Document Title')),
@@ -111,39 +138,43 @@ class _DocumentRequestPageState extends State<DocumentRequestPage> {
                                                   width: 0.5,
                                                   color: Color(0xffE6E6E6)))),
                                       child: ListTile(
+                                        onTap: () => viewDocRequest(
+                                            documentRequest, index, docReqId),
                                         title: Row(
                                           children: [
                                             Expanded(
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  viewDocRequest(
-                                                      documentRequest,
-                                                      index,
-                                                      docReqId);
-                                                },
-                                                child: Text(
-                                                  documentRequest.user_email,
-                                                  textAlign: TextAlign.center,
-                                                  style: GoogleFonts.poppins(
-                                                    textStyle: const TextStyle(
-                                                        color:
-                                                            Color(0xff0a0a0a),
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.normal),
-                                                  ),
+                                              child: Text(
+                                                documentRequest.user_email,
+                                                textAlign: TextAlign.center,
+                                                style: GoogleFonts.inter(
+                                                  textStyle: const TextStyle(
+                                                      color: Color(0xff1B2533),
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.normal),
                                                 ),
                                               ),
                                             ),
                                             Expanded(
                                               child: Text(
-                                                documentRequest.date_requested
-                                                    .toDate()
-                                                    .toString(),
+                                                '${DateFormat('MMMM d, yyyy h:mm a').format(documentRequest.date_requested.toDate())}',
                                                 textAlign: TextAlign.center,
-                                                style: GoogleFonts.poppins(
+                                                style: GoogleFonts.inter(
                                                   textStyle: const TextStyle(
-                                                      color: Color(0xff0a0a0a),
+                                                      color: Color(0xff1B2533),
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.normal),
+                                                ),
+                                              ),
+                                            ),
+                                            Expanded(
+                                              child: Text(
+                                                '${DateFormat('MMMM d, yyyy h:mm a').format(documentRequest.pickup_date.toDate())}',
+                                                textAlign: TextAlign.center,
+                                                style: GoogleFonts.inter(
+                                                  textStyle: const TextStyle(
+                                                      color: Color(0xff1B2533),
                                                       fontSize: 12,
                                                       fontWeight:
                                                           FontWeight.normal),
@@ -154,9 +185,9 @@ class _DocumentRequestPageState extends State<DocumentRequestPage> {
                                               child: Text(
                                                 documentRequest.document_title,
                                                 textAlign: TextAlign.center,
-                                                style: GoogleFonts.poppins(
+                                                style: GoogleFonts.inter(
                                                   textStyle: const TextStyle(
-                                                      color: Color(0xff0a0a0a),
+                                                      color: Color(0xff1B2533),
                                                       fontSize: 12,
                                                       fontWeight:
                                                           FontWeight.normal),
@@ -169,16 +200,16 @@ class _DocumentRequestPageState extends State<DocumentRequestPage> {
                                                   MainAxisAlignment.center,
                                               children: [
                                                 if (documentRequest
-                                                        .request_status ==
-                                                    "pending")
+                                                    .request_status
+                                                    .contains('Pending'))
                                                   Icon(
                                                     Icons.warning_amber_rounded,
                                                     color:
                                                         Colors.yellow.shade400,
                                                   )
                                                 else if (documentRequest
-                                                        .request_status ==
-                                                    "Denied")
+                                                    .request_status
+                                                    .contains('Denied'))
                                                   Icon(
                                                     Icons
                                                         .remove_circle_outline_rounded,
@@ -190,7 +221,121 @@ class _DocumentRequestPageState extends State<DocumentRequestPage> {
                                                         .check_circle_outline_rounded,
                                                     color:
                                                         Colors.green.shade400,
-                                                  )
+                                                  ),
+                                                SizedBox(
+                                                  width: 8,
+                                                ),
+                                                IconButton(
+                                                    onPressed: () {
+                                                      if (documentRequest
+                                                              .request_status ==
+                                                          'Pending') {
+                                                        // Show a Snackbar if the document status is pending
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(
+                                                          SnackBar(
+                                                            content: Text(
+                                                                'Document status is still pending and needs action before deletion.'),
+                                                            duration: Duration(
+                                                                seconds: 3),
+                                                          ),
+                                                        );
+                                                      } else {
+                                                        // Show the confirmation dialog if the status is not pending
+                                                        showDialog(
+                                                          context: context,
+                                                          builder: (BuildContext
+                                                              context) {
+                                                            return AlertDialog(
+                                                              title: Text(
+                                                                  'Confirm Deletion'),
+                                                              content: Text(
+                                                                  'Are you sure you want to delete this request permanently?'),
+                                                              actions: <Widget>[
+                                                                TextButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .pop(); // Close the dialog without deleting
+                                                                  },
+                                                                  child: Text(
+                                                                      'Abort'),
+                                                                ),
+                                                                TextButton(
+                                                                  onPressed:
+                                                                      () async {
+                                                                    // Close the confirmation dialog before deletion
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .pop();
+
+                                                                    try {
+                                                                      // Proceed with the deletion
+                                                                      await _databaseService.deleteDocReq(
+                                                                          docReqId,
+                                                                          documentRequest);
+
+                                                                      // Show success dialog
+                                                                      showDialog(
+                                                                        context:
+                                                                            context,
+                                                                        builder:
+                                                                            (BuildContext
+                                                                                context) {
+                                                                          return AlertDialog(
+                                                                            title:
+                                                                                Text('Success'),
+                                                                            content:
+                                                                                Text('The document request was successfully deleted.'),
+                                                                            actions: <Widget>[
+                                                                              TextButton(
+                                                                                onPressed: () {
+                                                                                  Navigator.of(context).pop(); // Close the dialog
+                                                                                },
+                                                                                child: Text('OK'),
+                                                                              ),
+                                                                            ],
+                                                                          );
+                                                                        },
+                                                                      );
+                                                                    } catch (e) {
+                                                                      // Show error dialog if something goes wrong
+                                                                      showDialog(
+                                                                        context:
+                                                                            context,
+                                                                        builder:
+                                                                            (BuildContext
+                                                                                context) {
+                                                                          return AlertDialog(
+                                                                            title:
+                                                                                Text('Error'),
+                                                                            content:
+                                                                                Text('An error occurred while deleting the document request: $e'),
+                                                                            actions: <Widget>[
+                                                                              TextButton(
+                                                                                onPressed: () {
+                                                                                  Navigator.of(context).pop(); // Close the dialog
+                                                                                },
+                                                                                child: Text('OK'),
+                                                                              ),
+                                                                            ],
+                                                                          );
+                                                                        },
+                                                                      );
+                                                                    }
+                                                                  },
+                                                                  child: Text(
+                                                                      'Delete'),
+                                                                ),
+                                                              ],
+                                                            );
+                                                          },
+                                                        );
+                                                      }
+                                                    },
+                                                    icon: Icon(Icons.delete))
                                               ],
                                             )),
                                           ],
@@ -211,15 +356,30 @@ class _DocumentRequestPageState extends State<DocumentRequestPage> {
     );
   }
 
-  viewDocRequest(DocumentRequest docRequests, int index, String docReqId) {
-    var viewDocRequestDialog = StatefulBuilder(
-      builder: (BuildContext context, StateSetter setState) {
+  int calculateAge(String birthDateString) {
+    // Parse the string into a DateTime object
+    DateTime birthDate = DateTime.parse(birthDateString);
+    DateTime currentDate = DateTime.now(); // Get the current date
+
+    int age = currentDate.year - birthDate.year;
+
+    // Check if the birthday has occurred yet this year
+    if (currentDate.month < birthDate.month ||
+        (currentDate.month == birthDate.month &&
+            currentDate.day < birthDate.day)) {
+      age--; // Subtract 1 if the birthday hasn't occurred yet this year
+    }
+
+    return age;
+  }
+
+  void viewDocRequest(DocumentRequest docRequest, int index, String docReqId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
         return Align(
           alignment: Alignment.center,
           child: Material(
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(8)),
-            ),
             child: Container(
               height: MediaQuery.of(context).size.height - 100,
               width: MediaQuery.of(context).size.width / 2,
@@ -227,115 +387,18 @@ class _DocumentRequestPageState extends State<DocumentRequestPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: Text(
-                      'Document Request',
-                      style: GoogleFonts.poppins(
-                        textStyle: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
+                  _buildDocumentRequestHeader(docRequest),
+                  const SizedBox(height: 16),
+                  _buildSenderInformation(docRequest, docReqId),
+                  const SizedBox(height: 16),
                   Expanded(
-                    child: Container(
-                      child: Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(text: 'Request ID: ${docReqId}\n'),
-                            TextSpan(
-                                text:
-                                    'Document Title: ${docRequests.document_title}\n'),
-                            TextSpan(
-                                text:
-                                    'Requested by: ${docRequests.requester_name} (${docRequests.user_email})\n'),
-                            TextSpan(
-                                text:
-                                    'Submitted on: ${docRequests.date_requested.toDate()}\n'),
-                            TextSpan(
-                                text:
-                                    'Pickup date: ${docRequests.pickup_date.toDate()}'),
-                          ],
-                        ),
-                      ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        _buildDocumentRequestActions(docRequest, docReqId),
+                      ],
                     ),
                   ),
-                  if (docRequests.request_status == "pending")
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              DocumentRequest updatedStatus =
-                                  docRequests.copyWith(
-                                      document_title:
-                                          docRequests.document_title,
-                                      user_email: docRequests.user_email,
-                                      requester_name:
-                                          docRequests.requester_name,
-                                      address: docRequests.address,
-                                      birthday: docRequests.birthday,
-                                      date_requested:
-                                          docRequests.date_requested,
-                                      pickup_date: docRequests.pickup_date,
-                                      request_status: "Denied");
-                              _databaseService.updateDocumentRequest(
-                                  docReqId, updatedStatus);
-                              Navigator.pop(context);
-                            },
-                            child: Container(
-                              alignment: Alignment.center,
-                              height: 40,
-                              width: 150,
-                              color: Colors.red.shade700,
-                              child: const Text(
-                                'Decline',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                              width: 16), // Add spacing between buttons
-                          InkWell(
-                            onTap: () {
-                              DocumentRequest updatedStatus =
-                                  docRequests.copyWith(
-                                      document_title:
-                                          docRequests.document_title,
-                                      user_email: docRequests.user_email,
-                                      requester_name:
-                                          docRequests.requester_name,
-                                      address: docRequests.address,
-                                      birthday: docRequests.birthday,
-                                      date_requested:
-                                          docRequests.date_requested,
-                                      pickup_date: docRequests.pickup_date,
-                                      request_status: "Approved");
-                              _databaseService.updateDocumentRequest(
-                                  docReqId, updatedStatus);
-                              Navigator.pop(context);
-                            },
-                            child: Container(
-                              alignment: Alignment.center,
-                              height: 40,
-                              width: 150,
-                              color: Colors.green.shade700,
-                              child: const Text(
-                                'Approve',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  else
-                    Text(docRequests.request_status)
                 ],
               ),
             ),
@@ -343,12 +406,150 @@ class _DocumentRequestPageState extends State<DocumentRequestPage> {
         );
       },
     );
+  }
 
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return viewDocRequestDialog;
+  Widget _buildDocumentRequestHeader(DocumentRequest docRequest) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: Text(
+        'Document Request',
+        style: GoogleFonts.inter(
+          textStyle: const TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+  Widget _buildSenderInformation(
+      DocumentRequest docRequest, String docIdString) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'About the Request',
+          style: GoogleFonts.inter(
+              textStyle:
+                  const TextStyle(fontSize: 24, fontWeight: FontWeight.w600)),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Document Id: $docIdString',
+          style: GoogleFonts.inter(textStyle: const TextStyle(fontSize: 14)),
+        ),
+        Text(
+          'Document Title: ${docRequest.document_title}',
+          style: GoogleFonts.inter(textStyle: const TextStyle(fontSize: 14)),
+        ),
+        Text(
+          'Fee: ${docRequest.fee}',
+          style: GoogleFonts.inter(textStyle: const TextStyle(fontSize: 14)),
+        ),
+        Text(
+          'Submitted on: ${DateFormat('MMMM d, yyyy h:mm a').format(docRequest.date_requested.toDate())}',
+          style: GoogleFonts.inter(textStyle: const TextStyle(fontSize: 14)),
+        ),
+        Text(
+          'Pickup Date: ${DateFormat('MMMM d, yyyy h:mm a').format(docRequest.pickup_date.toDate())}',
+          style: GoogleFonts.inter(textStyle: const TextStyle(fontSize: 14)),
+        ),
+        const SizedBox(height: 16),
+        Text(
+          'Sender Information',
+          style: GoogleFonts.inter(
+              textStyle:
+                  const TextStyle(fontSize: 24, fontWeight: FontWeight.w600)),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Name: ${docRequest.requester_name}',
+          style: GoogleFonts.inter(textStyle: const TextStyle(fontSize: 14)),
+        ),
+        Text(
+          'Birthday: ${docRequest.birthday}',
+          style: GoogleFonts.inter(textStyle: const TextStyle(fontSize: 14)),
+        ),
+        Text(
+          'Age: ${calculateAge(docRequest.birthday).toString()}',
+          style: GoogleFonts.inter(textStyle: const TextStyle(fontSize: 14)),
+        ),
+        Text(
+          'Contact: ${docRequest.contact_number}',
+          style: GoogleFonts.inter(textStyle: const TextStyle(fontSize: 14)),
+        ),
+        Text(
+          'Email: ${docRequest.user_email}',
+          style: GoogleFonts.inter(textStyle: const TextStyle(fontSize: 14)),
+        ),
+        Text(
+          'Years of Residence: ${docRequest.residence_since}',
+          style: GoogleFonts.inter(textStyle: const TextStyle(fontSize: 14)),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDocumentRequestActions(
+      DocumentRequest docRequest, String docReqId) {
+    if (docRequest.request_status == "Pending") {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _buildDeclineButton(docRequest, docReqId),
+          const SizedBox(width: 16),
+          _buildApproveButton(docRequest, docReqId),
+        ],
+      );
+    } else {
+      return Text(
+        'Status: ${docRequest.request_status}',
+        style: GoogleFonts.inter(textStyle: const TextStyle(fontSize: 14)),
+      );
+    }
+  }
+
+  Widget _buildDeclineButton(DocumentRequest docRequest, String docReqId) {
+    return InkWell(
+      onTap: () {
+        final updatedStatus = docRequest.copyWith(
+            request_status:
+                "Denied on ${DateFormat('MMMM d, yyyy h:mm a').format(Timestamp.now().toDate())}");
+        _databaseService.updateDocumentRequest(docReqId, updatedStatus);
+        Navigator.pop(context);
       },
+      child: Container(
+        alignment: Alignment.center,
+        height: 40,
+        width: 150,
+        color: Colors.red.shade700,
+        child: const Text(
+          'Decline',
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildApproveButton(DocumentRequest docRequest, String docReqId) {
+    return InkWell(
+      onTap: () {
+        final updatedStatus = docRequest.copyWith(request_status: "Approved");
+        _databaseService.updateDocumentRequest(docReqId, updatedStatus);
+        Navigator.pop(context);
+      },
+      child: Container(
+        alignment: Alignment.center,
+        height: 40,
+        width: 150,
+        color: Colors.green.shade700,
+        child: const Text(
+          'Approve',
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
     );
   }
 }

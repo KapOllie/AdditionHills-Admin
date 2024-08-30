@@ -3,6 +3,7 @@ import 'package:barangay_adittion_hills_app/common/widgets/common_widgets.dart';
 import 'package:barangay_adittion_hills_app/common/widgets/field_label/text_field.dart';
 import 'package:barangay_adittion_hills_app/common/widgets/textfield_validator/textfield_validators.dart';
 import 'package:barangay_adittion_hills_app/models/document/document.dart';
+import 'package:barangay_adittion_hills_app/presentation/documents/pages/new_document.dart';
 import 'package:barangay_adittion_hills_app/presentation/documents/widgets/dialog_box.dart';
 import 'package:barangay_adittion_hills_app/presentation/documents/widgets/required_textfield.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -29,7 +30,6 @@ class _DocumentsPageState extends State<DocumentsPage> {
   FieldLabel documentsText = FieldLabel();
   TextEditingController searchDoc = TextEditingController();
   String searchQuery = '';
-
   @override
   void initState() {
     super.initState();
@@ -272,7 +272,9 @@ class _DocumentsPageState extends State<DocumentsPage> {
                                     Expanded(
                                         child: Center(
                                             child: Text(
-                                      document.price,
+                                      document.fee == 0
+                                          ? 'Free'
+                                          : '₱${document.fee.toString()}',
                                       style: GoogleFonts.inter(
                                           textStyle: const TextStyle(
                                               fontSize: 12,
@@ -303,7 +305,7 @@ class _DocumentsPageState extends State<DocumentsPage> {
                                               MainAxisAlignment.center,
                                           children: [
                                             IconButton(
-                                              tooltip: 'Edit',
+                                              tooltip: 'Update',
                                               onPressed: () {
                                                 _dialogBox.showUpdateDialogBox(
                                                     context, document, docsId);
@@ -351,9 +353,7 @@ class _DocumentsPageState extends State<DocumentsPage> {
         floatingActionButton: Container(
           padding: const EdgeInsets.only(right: 32, bottom: 32),
           child: FloatingActionButton(
-            onPressed: () {
-              _dialogBox.showAddNewDialogBox(context);
-            },
+            onPressed: showNewDocument,
             backgroundColor: const Color(0xff6B3CEB),
             shape: const CircleBorder(),
             tooltip: 'Add New Document',
@@ -364,5 +364,13 @@ class _DocumentsPageState extends State<DocumentsPage> {
             ),
           ),
         ));
+  }
+
+  void showNewDocument() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return NewDocument();
+        });
   }
 }

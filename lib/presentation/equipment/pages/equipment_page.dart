@@ -29,7 +29,6 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
   String searchQuery = '';
   final List<TextEditingController> listControllers = [TextEditingController()];
   final List<String> listRequirements = <String>[""];
-  Color reqBorder = Color(0xfffffff);
   final DatabaseService _databaseService = DatabaseService();
 
   @override
@@ -46,285 +45,360 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xfff0ebf8),
-
-      body: Padding(
-        padding: const EdgeInsets.only(top: 8, bottom: 8, left: 0, right: 8),
-        child: Container(
-          height: double.infinity,
-          padding: const EdgeInsets.all(8),
-          decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(4)),
-              color: Colors.white),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Container(
-                height: 60,
-                padding: const EdgeInsets.all(8),
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(4)),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [equipmentText.headText('Event Equipment')],
-                ),
+      body: Container(
+        height: double.infinity,
+        padding: const EdgeInsets.all(16.0),
+        decoration: const BoxDecoration(color: Colors.white),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              height: 60,
+              padding: const EdgeInsets.all(8),
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(4)),
               ),
-              const SizedBox(height: 10),
-              Container(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                height: 56,
-                width: double.infinity,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Container(
-                      width: 280,
-                      height: double.infinity,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        border: Border(
-                          left: BorderSide(color: Color(0xffdadce0)),
-                          top: BorderSide(color: Color(0xffdadce0)),
-                          bottom: BorderSide(color: Color(0xffdadce0)),
-                          right: BorderSide(color: Color(0xffdadce0)),
-                        ),
-                        borderRadius: BorderRadius.zero,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [equipmentText.headText('Event Equipment')],
+              ),
+            ),
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              height: 56,
+              width: double.infinity,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      addNewItem(context);
+                    },
+                    child: Container(
+                      width: 160,
+                      decoration: BoxDecoration(
+                        color: Color(0xff017EF3),
+                        borderRadius: BorderRadius.all(Radius.circular(4)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black
+                                .withOpacity(0.2), // Shadow color with opacity
+                            offset:
+                                Offset(0, 2), // Horizontal and vertical offset
+                            blurRadius: 6, // Blur radius
+                            spreadRadius: 1, // Spread radius
+                          ),
+                        ],
                       ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 4),
-                              child: TextField(
-                                controller: searchEquipment,
-                                style: GoogleFonts.inter(
+                      child: Center(
+                        child: Text(
+                          '+ New Equipment',
+                          style: GoogleFonts.inter(
+                              textStyle:
+                                  TextStyle(color: Colors.white, fontSize: 12)),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 16,
+                  ),
+                  Container(
+                    width: 300,
+                    height: double.infinity,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      border: Border(
+                        left: BorderSide(color: Color(0xffdadce0)),
+                        top: BorderSide(color: Color(0xffdadce0)),
+                        bottom: BorderSide(color: Color(0xffdadce0)),
+                        right: BorderSide(color: Color(0xffdadce0)),
+                      ),
+                      borderRadius: BorderRadius.all(Radius.circular(4)),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: TextField(
+                              controller: searchEquipment,
+                              style: GoogleFonts.inter(
+                                textStyle: const TextStyle(
+                                  color: Color(0xff202124),
+                                  fontSize: 12,
+                                ),
+                              ),
+                              decoration: InputDecoration(
+                                contentPadding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
+                                focusedBorder: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                hintText: 'Search event equipment by item name',
+                                hintStyle: GoogleFonts.inter(
                                   textStyle: const TextStyle(
                                     color: Color(0xff202124),
                                     fontSize: 12,
                                   ),
                                 ),
-                                decoration: InputDecoration(
-                                  contentPadding:
-                                      const EdgeInsets.symmetric(horizontal: 8),
-                                  focusedBorder: InputBorder.none,
-                                  enabledBorder: InputBorder.none,
-                                  hintText:
-                                      'Search event equipment by item name',
-                                  hintStyle: GoogleFonts.inter(
-                                    textStyle: const TextStyle(
-                                      color: Color(0xff202124),
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ),
-                                cursorColor: const Color(0xff202124),
                               ),
+                              cursorColor: const Color(0xff202124),
                             ),
                           ),
-                          Container(
-                            decoration: const BoxDecoration(
-                              border: Border(
-                                left: BorderSide(color: Color(0xffdadce0)),
-                              ),
-                            ),
-                            child: IconButton(
-                              icon: const Icon(Icons.search_rounded),
-                              onPressed: () {
-                                debugPrint('Search tapped');
-                              },
+                        ),
+                        Container(
+                          decoration: const BoxDecoration(
+                            border: Border(
+                              left: BorderSide(color: Color(0xffdadce0)),
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 24,
-              ),
-              Container(
-                  height: 50,
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                    border: Border(
-                        left: BorderSide(color: Color(0xffdadce0), width: 1),
-                        right: BorderSide(color: Color(0xffdadce0), width: 1),
-                        bottom: BorderSide(color: Color(0xffdadce0), width: 1),
-                        top: BorderSide(color: Color(0xffdadce0), width: 1)),
-                    borderRadius: BorderRadius.zero,
-                    color: Colors.white,
-                  ),
-                  child: const ListTile(
-                    title: Row(
-                      children: [
-                        Expanded(
-                            child: ColumnFieldText(fieldText: 'Item Name')),
-                        Expanded(child: ColumnFieldText(fieldText: 'Quantity')),
-                        Expanded(
-                            child: ColumnFieldText(fieldText: 'Available')),
-                        Expanded(child: ColumnFieldText(fieldText: 'In Use')),
-                        Expanded(child: ColumnFieldText(fieldText: 'Actions')),
+                          child: IconButton(
+                            icon: const Icon(Icons.search_rounded),
+                            onPressed: () {
+                              debugPrint('Search tapped');
+                            },
+                          ),
+                        ),
                       ],
                     ),
-                  )),
-              SizedBox(
-                  height: 300,
-                  child: StreamBuilder(
-                      stream: _databaseService.getItems(),
-                      builder: (context, snapshot) {
-                        List equipment = snapshot.data?.docs ?? [];
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 24,
+            ),
+            Container(
+                height: 50,
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  border: Border(
+                      left: BorderSide(color: Color(0xffdadce0), width: 1),
+                      right: BorderSide(color: Color(0xffdadce0), width: 1),
+                      bottom: BorderSide(color: Color(0xffdadce0), width: 1),
+                      top: BorderSide(color: Color(0xffdadce0), width: 1)),
+                  borderRadius: BorderRadius.zero,
+                  color: Colors.white,
+                ),
+                child: const ListTile(
+                  title: Row(
+                    children: [
+                      Expanded(child: ColumnFieldText(fieldText: 'Item Name')),
+                      Expanded(child: ColumnFieldText(fieldText: 'Quantity')),
+                      Expanded(child: ColumnFieldText(fieldText: 'Available')),
+                      Expanded(child: ColumnFieldText(fieldText: 'In Use')),
+                      Expanded(child: ColumnFieldText(fieldText: 'Actions')),
+                    ],
+                  ),
+                )),
+            SizedBox(
+                height: 300,
+                child: StreamBuilder(
+                    stream: _databaseService.getItems(),
+                    builder: (context, snapshot) {
+                      List equipment = snapshot.data?.docs ?? [];
 
-                        // Filter the documents by the search query
-                        List filteredEquipments = equipment.where((doc) {
-                          String title = doc.data().itemName.toLowerCase();
-                          return title.contains(searchQuery);
-                        }).toList();
+                      // Filter the documents by the search query
+                      List filteredEquipments = equipment.where((doc) {
+                        String title = doc.data().itemName.toLowerCase();
+                        return title.contains(searchQuery);
+                      }).toList();
 
-                        if (equipment.isEmpty) {
-                          return const Center(
-                            child: Text('Empty'),
-                          );
-                        }
-                        if (filteredEquipments.isEmpty) {
-                          return const Center(
-                            child: Text('No documents found'),
-                          );
-                        }
+                      if (equipment.isEmpty) {
+                        return const Center(
+                          child: Text('Empty'),
+                        );
+                      }
+                      if (filteredEquipments.isEmpty) {
+                        return const Center(
+                          child: Text('No documents found'),
+                        );
+                      }
 
-                        return ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: equipment.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              NewEquipment newEquipment =
-                                  equipment[index].data();
-                              String equipmentId = equipment[index].id;
+                      return ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: equipment.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            NewEquipment newEquipment = equipment[index].data();
+                            String equipmentId = equipment[index].id;
 
-                              return Container(
-                                decoration: BoxDecoration(
-                                    border: Border(
-                                        right: BorderSide(
-                                            width: 1, color: Color(0xffE6E6E6)),
-                                        left: BorderSide(
-                                            width: 1, color: Color(0xffE6E6E6)),
-                                        bottom: BorderSide(
-                                            width: 1,
-                                            color: Color(0xffE6E6E6)))),
-                                child: ListTile(
-                                  onTap: () => viewItem(context, newEquipment),
-                                  titleAlignment: ListTileTitleAlignment.center,
-                                  title: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      // Item
-                                      Expanded(
-                                        child: Text(
-                                          newEquipment.itemName,
-                                          textAlign: TextAlign.center,
-                                          style: GoogleFonts.inter(
-                                            textStyle: const TextStyle(
-                                                color: Color(0xff0a0a0a),
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.normal),
-                                          ),
+                            return Container(
+                              decoration: BoxDecoration(
+                                  border: Border(
+                                      right: BorderSide(
+                                          width: 1, color: Color(0xffE6E6E6)),
+                                      left: BorderSide(
+                                          width: 1, color: Color(0xffE6E6E6)),
+                                      bottom: BorderSide(
+                                          width: 1, color: Color(0xffE6E6E6)))),
+                              child: ListTile(
+                                onTap: () => viewItem(context, newEquipment),
+                                titleAlignment: ListTileTitleAlignment.center,
+                                title: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    // Item
+                                    Expanded(
+                                      child: Text(
+                                        newEquipment.itemName,
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.inter(
+                                          textStyle: const TextStyle(
+                                              color: Color(0xff1B2533),
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.normal),
                                         ),
                                       ),
+                                    ),
 
-                                      // Quantity
-                                      Expanded(
-                                        child: Text(
-                                          newEquipment.itemQuantity.toString(),
-                                          textAlign: TextAlign.center,
-                                          style: GoogleFonts.inter(
-                                            textStyle: const TextStyle(
-                                                color: Color(0xff0a0a0a),
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.normal),
-                                          ),
+                                    // Quantity
+                                    Expanded(
+                                      child: Text(
+                                        newEquipment.itemQuantity.toString(),
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.inter(
+                                          textStyle: const TextStyle(
+                                              color: Color(0xff1B2533),
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.normal),
                                         ),
                                       ),
+                                    ),
 
-                                      // Available
-                                      Expanded(
-                                        child: Text(
-                                          '0',
-                                          textAlign: TextAlign.center,
-                                          style: GoogleFonts.inter(
-                                            textStyle: const TextStyle(
-                                                color: Color(0xff0a0a0a),
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.normal),
-                                          ),
+                                    // Available
+                                    Expanded(
+                                      child: Text(
+                                        '0',
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.inter(
+                                          textStyle: const TextStyle(
+                                              color: Color(0xff1B2533),
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.normal),
                                         ),
                                       ),
+                                    ),
 
-                                      // In Use
-                                      Expanded(
-                                        child: Text(
-                                          '0',
-                                          textAlign: TextAlign.center,
-                                          style: GoogleFonts.inter(
-                                            textStyle: const TextStyle(
-                                                color: Color(0xff0a0a0a),
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.normal),
-                                          ),
+                                    // In Use
+                                    Expanded(
+                                      child: Text(
+                                        '0',
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.inter(
+                                          textStyle: const TextStyle(
+                                              color: Color(0xff1B2533),
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.normal),
                                         ),
                                       ),
+                                    ),
 
-                                      // Actions
-                                      Expanded(
-                                          child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          actionButton(
-                                              const Icon(Icons.edit_rounded),
-                                              () {
-                                            // EDIT BUTTON
-
-                                            updateItem(context, equipmentId,
-                                                newEquipment);
-                                          }, const Color(0xff189877), 'Edit'),
-                                          actionButton(
-                                              const Icon(Icons.delete_rounded),
-                                              () {
-                                            // DELETE BUTTON
-
-                                            deleteItem(context, equipmentId);
-                                          }, const Color(0XFFDD3409), 'Delete')
-                                        ],
-                                      ))
-                                    ],
-                                  ),
+                                    // Actions
+                                    Expanded(
+                                        child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Expanded(
+                                          child: InkWell(
+                                            onTap: () {
+                                              updateItem(context, equipmentId,
+                                                  newEquipment);
+                                            },
+                                            child: Container(
+                                              padding: EdgeInsets.all(8),
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: Color(0xff017EF3)),
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(4.0)),
+                                                // color: Color(0xff017EF3),
+                                              ),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Icon(
+                                                    Icons.edit,
+                                                    color: Color(0xff017EF3),
+                                                    size: 18,
+                                                  ),
+                                                  SizedBox(
+                                                    width: 8,
+                                                  ),
+                                                  Text(
+                                                    'Edit',
+                                                    style: GoogleFonts.inter(
+                                                        textStyle: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            fontSize: 12,
+                                                            color: Color(
+                                                                0xff017EF3))),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 8.0,
+                                        ),
+                                        Expanded(
+                                          child: InkWell(
+                                            onTap: () {
+                                              deleteItem(context, equipmentId);
+                                            },
+                                            child: Container(
+                                              padding: EdgeInsets.all(8),
+                                              decoration: BoxDecoration(
+                                                // color: Color(0XFFDD3409),
+                                                border: Border.all(
+                                                    color: Color(0XFFDD3409)),
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(4.0)),
+                                                // color: Color(0XFFDD3409),
+                                              ),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Icon(
+                                                    Icons.delete,
+                                                    color: Color(0XFFDD3409),
+                                                    size: 18,
+                                                  ),
+                                                  SizedBox(
+                                                    width: 8,
+                                                  ),
+                                                  Text(
+                                                    'Delete',
+                                                    style: GoogleFonts.inter(
+                                                      textStyle: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        fontSize: 12,
+                                                        color:
+                                                            Color(0XFFDD3409),
+                                                      ),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ))
+                                  ],
                                 ),
-                              );
-                            });
-                      })),
-            ],
-          ),
-        ),
-      ),
-
-      // Floating Action Button
-
-      floatingActionButton: Container(
-        padding: const EdgeInsets.only(right: 32, bottom: 32),
-        child: FloatingActionButton(
-          onPressed: () {
-            addNewItem(context);
-          },
-          backgroundColor: const Color(0xff6B3CEB),
-          shape: const CircleBorder(),
-          tooltip: 'Add Item',
-          child: const Icon(
-            Icons.add_rounded,
-            size: 24,
-            color: Colors.white,
-          ),
+                              ),
+                            );
+                          });
+                    })),
+          ],
         ),
       ),
     );
@@ -333,7 +407,6 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
   void addNewItem(BuildContext context) {
     final List hasNoRequirements = ["none"];
     final Map<String, dynamic> hasNoPricingTable = {};
-    FieldLabel variable = FieldLabel();
 
     List<TextEditingController> addSetNameList = [TextEditingController()];
     List<TextEditingController> addListSetQuantity = [TextEditingController()];
@@ -1347,19 +1420,6 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                                             return pricingTable;
                                           }
 
-                                          Map<String, dynamic> pricingTable =
-                                              generatePricingTable(
-                                                  addSetNameList,
-                                                  addListSetQuantity,
-                                                  updateListSetPrice);
-                                          List<dynamic> rulesListString = [];
-                                          for (var i = 0;
-                                              i < listRules.length;
-                                              i++) {
-                                            rulesListString[i] =
-                                                listRules[i].text;
-                                          }
-
                                           if (_formKey.currentState!
                                               .validate()) {
                                             List<dynamic> listControllerValue =
@@ -1374,19 +1434,24 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                                                     itemDescription:
                                                         addItemDescription.text,
                                                     itemQuantity:
-                                                        int.parse(
-                                                            addQuantity.text),
+                                                        int.parse(addQuantity
+                                                            .text),
                                                     itemRequirements: hasReq
                                                         ? listControllerValue
                                                         : hasNoRequirements,
                                                     createdOn: Timestamp.now(),
                                                     lastUpdatedOn:
                                                         Timestamp.now(),
-                                                    pricingTable:
-                                                        hasPricingTable
-                                                            ? pricingTable
-                                                            : hasNoPricingTable,
-                                                    rules: rulesListString);
+                                                    pricingTable: hasPricingTable
+                                                        ? generatePricingTable(
+                                                            addSetNameList,
+                                                            addListSetQuantity,
+                                                            updateListSetPrice)
+                                                        : hasNoPricingTable,
+                                                    rules: hasRules
+                                                        ? convertRules(
+                                                            listRules)
+                                                        : []);
 
                                             _databaseService
                                                 .addItem(addNewEquipment);
@@ -1415,6 +1480,37 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
     );
   }
 
+  List<dynamic> convertRules(List<TextEditingController> listRules) {
+    List<dynamic> values =
+        listRules.map((controller) => controller.text).toList();
+    return values;
+  }
+
+  Map<String, dynamic> generatePricingTable(
+      List<TextEditingController> updateListSetName,
+      List<TextEditingController> updateListSetQuantity,
+      List<TextEditingController> updateListSetPrice) {
+    Map<String, dynamic> pricingTable = {};
+    for (int i = 0; i < updateListSetName.length; i++) {
+      if (i < updateListSetQuantity.length && i < updateListSetPrice.length) {
+        String name = updateListSetName[i].text;
+        String quantity = updateListSetQuantity[i].text;
+        String price = updateListSetPrice[i].text;
+
+        int quantityInt = int.tryParse(quantity) ?? 0;
+        double priceDouble = double.tryParse(price) ?? 0.0;
+
+        // Populate the map
+        pricingTable[name] = {
+          'quantity': quantityInt,
+          'price': priceDouble,
+        };
+      }
+    }
+
+    return pricingTable;
+  }
+
   void deleteItem(BuildContext context, String itemId) {
     showDialog(
         context: context,
@@ -1430,7 +1526,7 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
               'Are your sure?',
               style: GoogleFonts.inter(
                   textStyle: const TextStyle(
-                      color: Color(0xff0a0a0a), fontWeight: FontWeight.w600),
+                      color: Color(0xff1B2533), fontWeight: FontWeight.w600),
                   fontSize: 20),
             ),
             content: Text(
@@ -1438,7 +1534,7 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
               textAlign: TextAlign.center,
               style: GoogleFonts.inter(
                   textStyle: const TextStyle(
-                      color: Color(0xff0a0a0a), fontWeight: FontWeight.w400),
+                      color: Color(0xff1B2533), fontWeight: FontWeight.w400),
                   fontSize: 12),
             ),
             actions: [
@@ -2501,9 +2597,6 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                                           sample2.clear();
                                           Navigator.pop(context);
                                           sample2.add(TextEditingController());
-                                          setState(() {
-                                            reqBorder = Colors.transparent;
-                                          });
                                         },
                                         child: Container(
                                           alignment: Alignment.center,
