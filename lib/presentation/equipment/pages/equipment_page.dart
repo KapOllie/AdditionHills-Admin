@@ -1675,6 +1675,48 @@ class _EventEquipmentPageState extends State<EventEquipmentPage> {
                       );
                     },
                   ),
+                  Text(
+                    'Rules: ',
+                    textAlign: TextAlign.justify,
+                    style: GoogleFonts.inter(
+                        textStyle: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w600)),
+                  ),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: newEquipment.rules.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: newEquipment.rules[index] == []
+                            ? Text(
+                                'None',
+                                style: GoogleFonts.inter(
+                                    textStyle: TextStyle(fontSize: 12)),
+                              )
+                            : Text(
+                                '${index + 1}. ${newEquipment.rules[index]}',
+                                style: GoogleFonts.inter(
+                                    textStyle: TextStyle(fontSize: 14)),
+                              ),
+                      );
+                    },
+                  ),
+                  Text(
+                    'Pricing Table: ',
+                    textAlign: TextAlign.justify,
+                    style: GoogleFonts.inter(
+                        textStyle: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.w600)),
+                  ),
+                  ...newEquipment.pricingTable.entries.map((entry) {
+                    return ListTile(
+                      title: Text(
+                        'Set: ${entry.key}, Quantity: ${entry.value['quantity']}, Price: ${entry.value['price']}',
+                        style: GoogleFonts.inter(
+                            textStyle: TextStyle(fontSize: 14)),
+                      ),
+                    );
+                  }).toList(),
                 ],
               ),
             ),

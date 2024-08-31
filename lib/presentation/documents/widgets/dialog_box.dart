@@ -1,6 +1,7 @@
 import 'package:barangay_adittion_hills_app/common/services/database_service.dart';
 import 'package:barangay_adittion_hills_app/common/widgets/textfield_validator/textfield_validators.dart';
 import 'package:barangay_adittion_hills_app/models/document/document.dart';
+import 'package:barangay_adittion_hills_app/presentation/documents/widgets/fullscreen.dart';
 import 'package:barangay_adittion_hills_app/presentation/documents/widgets/required_textfield.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
@@ -99,21 +100,33 @@ class DialogBox {
                         ),
                         child: viewDocument.imageUrl != null &&
                                 viewDocument.imageUrl!.isNotEmpty
-                            ? Image.network(
-                                viewDocument.imageUrl!,
-                                fit: BoxFit.contain,
-                                loadingBuilder: (context, child, progress) {
-                                  if (progress == null) {
-                                    return child;
-                                  } else {
+                            ? GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => FullScreenImage(
+                                          imageUrl: viewDocument.imageUrl!),
+                                    ),
+                                  );
+                                },
+                                child: Image.network(
+                                  viewDocument.imageUrl!,
+                                  fit: BoxFit.contain,
+                                  loadingBuilder: (context, child, progress) {
+                                    if (progress == null) {
+                                      return child;
+                                    } else {
+                                      return const Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    }
+                                  },
+                                  errorBuilder: (context, error, stackTrace) {
                                     return const Center(
-                                      child: CircularProgressIndicator(),
-                                    );
-                                  }
-                                },
-                                errorBuilder: (context, error, stackTrace) {
-                                  return const Center(child: Icon(Icons.image));
-                                },
+                                        child: Icon(Icons.image));
+                                  },
+                                ),
                               )
                             : const Center(
                                 child: Text(
@@ -143,14 +156,16 @@ class DialogBox {
                           text: 'Fee: ',
                           style: GoogleFonts.inter(
                               textStyle: TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.w600)),
+                                  fontSize: 14, fontWeight: FontWeight.normal)),
                         ),
                         TextSpan(
-                          text: viewDocument.fee.toString(),
+                          text: viewDocument.fee == 0
+                              ? 'Free'
+                              : viewDocument.fee.toString(),
                           style: GoogleFonts.inter(
                               textStyle: TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.normal)),
-                        )
+                                  fontSize: 14, fontWeight: FontWeight.w600)),
+                        ),
                       ])),
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 8),
@@ -161,25 +176,25 @@ class DialogBox {
                                   fontSize: 14, fontWeight: FontWeight.w600)),
                         ),
                       ),
-                      ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: viewDocRequirements.length,
-                          itemBuilder: (BuildContext context, index) {
-                            return ListTile(
-                              title: viewDocument.docRequirements[index] ==
-                                      'None'
-                                  ? Text(
-                                      'None',
-                                      style: GoogleFonts.inter(
-                                          textStyle: TextStyle(fontSize: 12)),
-                                    )
-                                  : Text(
-                                      '${index + 1}. ${viewDocRequirements[index]}',
-                                      style: GoogleFonts.inter(
-                                          textStyle: TextStyle(fontSize: 14)),
-                                    ),
-                            );
-                          })
+                      if (viewDocument.docRequirements.isNotEmpty)
+                        ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: viewDocRequirements.length,
+                            itemBuilder: (BuildContext context, index) {
+                              return ListTile(
+                                title: viewDocument.docRequirements.isEmpty
+                                    ? Text(
+                                        'None',
+                                        style: GoogleFonts.inter(
+                                            textStyle: TextStyle(fontSize: 12)),
+                                      )
+                                    : Text(
+                                        '${index + 1}. ${viewDocRequirements[index]}',
+                                        style: GoogleFonts.inter(
+                                            textStyle: TextStyle(fontSize: 14)),
+                                      ),
+                              );
+                            })
                     ],
                   ),
                 ),

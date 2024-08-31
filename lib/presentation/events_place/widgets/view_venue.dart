@@ -28,6 +28,16 @@ viewVenue(BuildContext context, EventVenue eventVenue, String venueId) {
                           title: Text(eventVenue.venueRequirements[index]),
                         );
                       }),
+                ),
+                Container(
+                  height: 50,
+                  child: ListView.builder(
+                      itemCount: eventVenue.venueAvailable.length,
+                      itemBuilder: (BuildContext context, index) {
+                        return ListTile(
+                          title: Text(eventVenue.venueAvailable[index]),
+                        );
+                      }),
                 )
               ],
             ),

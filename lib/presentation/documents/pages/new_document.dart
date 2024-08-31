@@ -469,6 +469,9 @@ class _NewDocumentState extends State<NewDocument> {
                                       fontWeight: FontWeight.w600)))),
                     ),
                     onTap: () async {
+                      List<String> valueList = listDocumentRequirements
+                          .map((controller) => controller.text)
+                          .toList();
                       if (_uploadedImageUrl == null) {
                         // Show alert dialog if no image is selected
                         showDialog(
@@ -500,19 +503,16 @@ class _NewDocumentState extends State<NewDocument> {
                           },
                         );
                       } else if (_formKey.currentState!.validate()) {
-                        List<String> requirementsValues =
-                            listDocumentRequirements
-                                .map((controller) => controller.text)
-                                .toList();
                         Document newDocument = Document(
                             title: addTitle.text,
                             description: addDesc.text,
                             createdOn: Timestamp.now(),
                             lastModifiedOn: Timestamp.now(),
-                            fee: double.parse(addFee.text),
+                            fee: addFee.text == 'Free'
+                                ? 0
+                                : double.parse(addFee.text),
                             imageUrl: _uploadedImageUrl!,
-                            docRequirements:
-                                _hasReq == true ? requirementsValues : []);
+                            docRequirements: hasReq == true ? valueList : []);
 
                         // Call addDoc and await the result
                         bool success = await _databaseService.addDoc(

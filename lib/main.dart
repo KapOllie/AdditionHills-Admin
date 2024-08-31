@@ -1,20 +1,18 @@
 import 'package:barangay_adittion_hills_app/core/configs/theme/app_theme.dart';
 import 'package:barangay_adittion_hills_app/firebase_options.dart';
-import 'package:barangay_adittion_hills_app/pickaboo.dart';
 import 'package:barangay_adittion_hills_app/presentation/auth/pages/log_in_page.dart';
 import 'package:barangay_adittion_hills_app/presentation/auth/pages/signup.dart';
 import 'package:barangay_adittion_hills_app/presentation/auth/pages/signup_page.dart';
-import 'package:barangay_adittion_hills_app/presentation/equipment/pages/equipment_page.dart';
-import 'package:barangay_adittion_hills_app/presentation/events_place/event_place.dart';
-import 'package:barangay_adittion_hills_app/presentation/home/bloc/admin_menu_item_blocs.dart';
+import 'package:barangay_adittion_hills_app/presentation/dashboard/pages/admin_dashboard_page.dart';
 import 'package:barangay_adittion_hills_app/presentation/home/pages/home_page.dart';
-import 'package:barangay_adittion_hills_app/presentation/requests/document_requests/pages/document_request.dart';
-import 'package:barangay_adittion_hills_app/presentation/venue_requests.dart/venue_requests.dart';
+import 'package:barangay_adittion_hills_app/try.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:barangay_adittion_hills_app/presentation/home/bloc/admin_menu_item_blocs.dart';
 
-Future main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(
@@ -35,18 +33,39 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'RequEase',
         debugShowCheckedModeBanner: false,
-        home: HomePage(
-          email: '',
-        ),
         theme: AppTheme.lightTheme,
+        home: AuthHandler(),
         routes: {
-          '/home': (context) => const HomePage(
-                email: '',
-              ),
+          '/home': (context) => const HomePage(email: ''),
           '/login': (context) => const LoginPage(),
-          '/signup': (context) => const SignupPage()
+          '/signup': (context) => const SignupPage(),
         },
       ),
+    );
+  }
+}
+
+class AuthHandler extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // While waiting for the auth state to load
+          return Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        } else if (snapshot.hasData) {
+          // User is logged in
+          return HomePage(email: snapshot.data?.email ?? '');
+        } else {
+          // User is not logged in
+          return LoginPage();
+        }
+      },
     );
   }
 }

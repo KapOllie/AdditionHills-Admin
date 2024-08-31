@@ -1,4 +1,5 @@
 import 'package:barangay_adittion_hills_app/common/services/database_service.dart';
+import 'package:barangay_adittion_hills_app/models/admin/admin.dart';
 import 'package:barangay_adittion_hills_app/models/user/user_web.dart';
 import 'package:barangay_adittion_hills_app/presentation/auth/pages/log_in_page.dart';
 import 'package:barangay_adittion_hills_app/presentation/auth/utils/firebase_auth_services.dart';
@@ -57,12 +58,12 @@ class _SignupPageState extends State<SignupPage> {
 
       User? user = userCredential.user;
       if (user != null) {
-        UserWeb newUser = UserWeb(
+        AdminModel newUser = AdminModel(
             name: "${_lastName.text}, ${_firstName.text}",
             email: _email.text,
             birthday: _birthday.text,
             address: _address.text,
-            contact: _phoneNumber.text,
+            contact: '+639${_phoneNumber.text}',
             userType: "admin");
 
         bool success = await _databaseService.addUsers(newUser, _email.text);

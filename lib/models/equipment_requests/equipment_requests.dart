@@ -12,6 +12,7 @@ class EquipmentRequestsModel {
   Timestamp requestDate;
   String requestSelectedDate;
   String requestSelectedTime;
+  String request_status;
 
   EquipmentRequestsModel({
     required this.requesterName,
@@ -25,6 +26,7 @@ class EquipmentRequestsModel {
     required this.requestDate,
     required this.requestSelectedDate,
     required this.requestSelectedTime,
+    required this.request_status,
   });
 
   EquipmentRequestsModel.fromJson(Map<String, Object?> json)
@@ -36,10 +38,11 @@ class EquipmentRequestsModel {
           requesterPurpose: json['purpose'] as String,
           requesterAge: json['user_age'] as String,
           requesterEmail: json['user_email'] as String,
-          requestEquipment: json['request_equipment'] as List<dynamic>,
+          requestEquipment: json['equipments'] as List<dynamic>,
           requestDate: json['date_requested'] as Timestamp,
           requestSelectedDate: json['selected_date'] as String,
           requestSelectedTime: json['selected_time'] as String,
+          request_status: json['request_status'] as String,
         );
 
   EquipmentRequestsModel copyWith({
@@ -54,20 +57,21 @@ class EquipmentRequestsModel {
     Timestamp? requestDate,
     String? requestSelectedDate,
     String? requestSelectedTime,
+    String? request_status,
   }) {
     return EquipmentRequestsModel(
-      requesterName: requesterName ?? this.requesterName,
-      requesterContact: requesterContact ?? this.requesterContact,
-      requesterAddress: requesterAddress ?? this.requesterAddress,
-      requesterBirthday: requesterBirthday ?? this.requesterBirthday,
-      requesterPurpose: requesterPurpose ?? this.requesterPurpose,
-      requesterAge: requesterAge ?? this.requesterAge,
-      requesterEmail: requesterEmail ?? this.requesterEmail,
-      requestEquipment: requestEquipment ?? this.requestEquipment,
-      requestDate: requestDate ?? this.requestDate,
-      requestSelectedDate: requestSelectedDate ?? this.requestSelectedDate,
-      requestSelectedTime: requestSelectedTime ?? this.requestSelectedTime,
-    );
+        requesterName: requesterName ?? this.requesterName,
+        requesterContact: requesterContact ?? this.requesterContact,
+        requesterAddress: requesterAddress ?? this.requesterAddress,
+        requesterBirthday: requesterBirthday ?? this.requesterBirthday,
+        requesterPurpose: requesterPurpose ?? this.requesterPurpose,
+        requesterAge: requesterAge ?? this.requesterAge,
+        requesterEmail: requesterEmail ?? this.requesterEmail,
+        requestEquipment: requestEquipment ?? this.requestEquipment,
+        requestDate: requestDate ?? this.requestDate,
+        requestSelectedDate: requestSelectedDate ?? this.requestSelectedDate,
+        requestSelectedTime: requestSelectedTime ?? this.requestSelectedTime,
+        request_status: request_status ?? this.request_status);
   }
 
   Map<String, Object?> toJson() {
@@ -79,10 +83,11 @@ class EquipmentRequestsModel {
       'purpose': requesterPurpose,
       'user_age': requesterAge,
       'user_email': requesterEmail,
-      'request_equipment': requestEquipment,
+      'equipments': requestEquipment,
       'date_requested': requestDate,
       'selected_date': requestSelectedDate,
       'selected_time': requestSelectedTime,
+      'request_status': request_status,
     };
   }
 }

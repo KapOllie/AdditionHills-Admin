@@ -1,7 +1,10 @@
+import 'package:barangay_adittion_hills_app/common/services/database_service.dart';
 import 'package:barangay_adittion_hills_app/common/widgets/column_field_text.dart';
 import 'package:barangay_adittion_hills_app/common/widgets/field_label/text_field.dart';
+import 'package:barangay_adittion_hills_app/models/equipment_requests/equipment_requests.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 class EventEquipmentRequestsPage extends StatefulWidget {
   const EventEquipmentRequestsPage({super.key});
@@ -13,8 +16,12 @@ class EventEquipmentRequestsPage extends StatefulWidget {
 
 class _EventEquipmentRequestsPageState
     extends State<EventEquipmentRequestsPage> {
+  TextEditingController searchEquip = TextEditingController();
+  DatabaseService _databaseService = DatabaseService();
   FieldLabel equipmentRequestText = FieldLabel();
   String _sortBy = 'All';
+  String request = '';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,30 +42,6 @@ class _EventEquipmentRequestsPageState
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: InkWell(
-                        onTap: () {
-                          // addNewItem(context);
-                        },
-                        child: Container(
-                          width: 180,
-                          padding: EdgeInsets.symmetric(horizontal: 8.0),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey.shade300),
-                            borderRadius: BorderRadius.all(Radius.circular(4)),
-                          ),
-                          child: Center(
-                            child: Text(
-                              '+ New Transaction',
-                              style: GoogleFonts.inter(
-                                  textStyle: TextStyle(
-                                      color: Color(0xff1B2533), fontSize: 14)),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
                     Container(
                       width: 400,
                       height: double.infinity,
@@ -79,7 +62,10 @@ class _EventEquipmentRequestsPageState
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 4),
                               child: TextField(
-                                // controller: searchEquipment,
+                                onChanged: (value) {
+                                  request = value;
+                                },
+                                controller: searchEquip,
                                 style: GoogleFonts.inter(
                                   textStyle: const TextStyle(
                                     color: Color(0xff202124),
@@ -195,6 +181,247 @@ class _EventEquipmentRequestsPageState
                 )),
             SizedBox(
               height: 300,
+              child: StreamBuilder(
+                  stream: _databaseService.getEquipmentRequests(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+
+                    List<dynamic> allEquipmentRequests =
+                        snapshot.data?.docs ?? [];
+
+                    // Filter the list based on the searchValue
+                    if (searchEquip.text.isNotEmpty) {
+                      allEquipmentRequests =
+                          allEquipmentRequests.where((request) {
+                        EquipmentRequestsModel model = request.data();
+                        return model.requesterName
+                            .toLowerCase()
+                            .contains(searchEquip.text.toLowerCase());
+                      }).toList();
+                    }
+
+                    // Sort the list based on the selected criteria
+                    if (_sortBy != 'All') {
+                      allEquipmentRequests.sort((a, b) {
+                        EquipmentRequestsModel modelA = a.data();
+                        EquipmentRequestsModel modelB = b.data();
+                        return modelA.request_status
+                            .compareTo(modelB.request_status);
+                      });
+                      if (_sortBy == 'Approved') {
+                        allEquipmentRequests = allEquipmentRequests
+                            .where((request) =>
+                                request.data().request_status == 'Approved')
+                            .toList();
+                      } else if (_sortBy == 'Pending') {
+                        allEquipmentRequests = allEquipmentRequests
+                            .where((request) =>
+                                request.data().request_status == 'Pending')
+                            .toList();
+                      } else if (_sortBy == 'Declined') {
+                        allEquipmentRequests = allEquipmentRequests
+                            .where((request) =>
+                                request.data().request_status == 'Declined')
+                            .toList();
+                      }
+                    }
+
+                    return ListView.builder(
+                        itemCount: allEquipmentRequests.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          EquipmentRequestsModel model =
+                              allEquipmentRequests[index].data();
+                          String id = allEquipmentRequests[index].id;
+
+                          return Container(
+                            decoration: BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(
+                                    width: 1, color: Color(0xffE6E6E6)),
+                              ),
+                            ),
+                            child: ListTile(
+                              titleAlignment: ListTileTitleAlignment.center,
+                              title: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    child: Tooltip(
+                                      message: id,
+                                      child: Text(
+                                        id,
+                                        overflow: TextOverflow.ellipsis,
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.inter(
+                                          textStyle: const TextStyle(
+                                              color: Color(0xff1B2533),
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.normal),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      model.requesterName,
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.inter(
+                                        textStyle: const TextStyle(
+                                            color: Color(0xff1B2533),
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.normal),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      model.requestEquipment.toString(),
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.inter(
+                                        textStyle: const TextStyle(
+                                            color: Color(0xff1B2533),
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.normal),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Tooltip(
+                                      message: DateFormat(
+                                              'yyyy-MM-dd \'at\' hh:mm a')
+                                          .format(model.requestDate.toDate()),
+                                      child: Text(
+                                        overflow: TextOverflow.ellipsis,
+                                        DateFormat('yyyy-MM-dd \'at\' hh:mm a')
+                                            .format(model.requestDate.toDate()),
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.inter(
+                                          textStyle: const TextStyle(
+                                              color: Color(0xff1B2533),
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.normal),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      model.requestSelectedDate,
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.inter(
+                                        textStyle: const TextStyle(
+                                            color: Color(0xff1B2533),
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.normal),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Text(
+                                      model.request_status,
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.inter(
+                                        textStyle: const TextStyle(
+                                            color: Color(0xff1B2533),
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.normal),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                      child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      IconButton(
+                                          onPressed: () {
+                                            // viewVenueRequest(
+                                            //     model, index, venueId);
+                                          },
+                                          tooltip: 'View',
+                                          icon: Icon(
+                                            Icons.open_in_new_rounded,
+                                            color: Colors.yellow,
+                                          )),
+                                      IconButton(
+                                        tooltip: 'Delete',
+                                        onPressed: () async {
+                                          // Show the confirmation dialog
+                                          bool confirmDeletion =
+                                              await showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: Text('Confirm Deletion'),
+                                                content: Text(
+                                                    'Are you sure you want to permanently delete this request?'),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      // Close the dialog and return false (abort deletion)
+                                                      Navigator.of(context)
+                                                          .pop(false);
+                                                    },
+                                                    child: Text('Abort'),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      // Close the dialog and return true (confirm deletion)
+                                                      Navigator.of(context)
+                                                          .pop(true);
+                                                    },
+                                                    child: Text(
+                                                      'Delete',
+                                                      style: TextStyle(
+                                                          color: Colors.red),
+                                                    ),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+
+                                          // If the user confirmed deletion, proceed with the deletion process
+                                          if (confirmDeletion == true) {
+                                            bool success =
+                                                await _databaseService
+                                                    .deleteEquipReq(id);
+
+                                            if (success) {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                      'Request deleted successfully!'),
+                                                  backgroundColor: Colors.green,
+                                                ),
+                                              );
+                                            } else {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                      'Failed to delete request.'),
+                                                  backgroundColor: Colors.red,
+                                                ),
+                                              );
+                                            }
+                                          }
+                                        },
+                                        icon: Icon(
+                                          Icons.delete_rounded,
+                                          color: Colors.red,
+                                        ),
+                                      )
+                                    ],
+                                  ))
+                                ],
+                              ),
+                            ),
+                          );
+                        });
+                  }),
             )
           ],
         ),

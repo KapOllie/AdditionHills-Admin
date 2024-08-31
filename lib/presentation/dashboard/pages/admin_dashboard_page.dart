@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:printing/printing.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
 
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({super.key});
@@ -11,6 +15,196 @@ class AdminDashboard extends StatefulWidget {
 }
 
 class _AdminDashboardState extends State<AdminDashboard> {
+  Future<List<Map<String, dynamic>>> fetchApprovedRequests(
+      int year, int month) async {
+    print(month.toString());
+    print(year.toString());
+
+    final startDate = DateTime(year, month + 1, 1);
+    final endDate = DateTime(year, month + 2, 1);
+
+    print(startDate.toString());
+    print(endDate.toString());
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('document_requests')
+        .where('request_status', isEqualTo: 'Approved')
+        .where('pickup_date', isGreaterThanOrEqualTo: startDate)
+        .where('pickup_date', isLessThan: endDate)
+        .get();
+    print(querySnapshot.docs.map((doc) => doc.data()).toList());
+    return querySnapshot.docs.map((doc) {
+      Map<String, dynamic> data = doc.data();
+      data['pickup_date'] = DateFormat('MMMM dd, yyyy')
+          .format((data['pickup_date'] as Timestamp).toDate());
+
+      data['date_requested'] = DateFormat('MMMM dd, yyyy')
+          .format((data['date_requested'] as Timestamp).toDate());
+
+      return data;
+    }).toList();
+  }
+
+  Future<pw.Document> generatePdf(List<Map<String, dynamic>> requests) async {
+    final pdf = pw.Document();
+
+    final totalFee = requests.fold(
+        0.0, (sum, request) => sum + (request['fee'] as num).toDouble());
+
+    pdf.addPage(
+      pw.Page(
+        build: (pw.Context context) {
+          return pw.Column(
+            children: [
+              pw.Text('Addition Hills',
+                  style: pw.TextStyle(
+                    fontSize: 24,
+                    fontWeight: pw.FontWeight.bold,
+                  )),
+              pw.Text('Mandaluyong City',
+                  style: pw.TextStyle(
+                    fontSize: 14,
+                    fontWeight: pw.FontWeight.normal,
+                  )),
+              // Header Section
+              pw.Container(
+                decoration: pw.BoxDecoration(
+                  border: pw.Border(
+                      bottom: pw.BorderSide()), // Adds a bottom border
+                ),
+                padding: pw.EdgeInsets.only(bottom: 10),
+                child: pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Assuming you have a logo to add here
+                    // pw.Image(pw.MemoryImage(
+                    //     logoBytes)), // Replace `logoBytes` with your actual logo bytes
+                    pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Text('Monthly Collection',
+                            textAlign: pw.TextAlign.left,
+                            style: pw.TextStyle(
+                              fontSize: 16,
+                              fontWeight: pw.FontWeight.normal,
+                            )),
+                        pw.Text('${selectedMonth + 1}/$selectedYear',
+                            textAlign: pw.TextAlign.left,
+                            style: pw.TextStyle(
+                              fontSize: 14,
+                              fontWeight: pw.FontWeight.normal,
+                            )),
+                      ],
+                    ),
+                    pw.Text('Date: ${DateTime.now().toString()}',
+                        style: pw.TextStyle(
+                          fontSize: 12,
+                          fontWeight: pw.FontWeight.normal,
+                        )),
+                  ],
+                ),
+              ),
+              pw.SizedBox(height: 20),
+              pw.Table(
+                border: pw.TableBorder.all(), // Adds borders to the table
+                children: [
+                  // Table Header
+                  pw.TableRow(
+                    decoration: pw.BoxDecoration(
+                      border: pw.Border.all(), // Adds borders to the row
+                    ),
+                    children: [
+                      pw.Container(
+                        padding: pw.EdgeInsets.all(4),
+                        child: pw.Text('Date Requested'),
+                      ),
+                      pw.Container(
+                        padding: pw.EdgeInsets.all(4),
+                        child: pw.Text('Requester Name'),
+                      ),
+                      pw.Container(
+                        padding: pw.EdgeInsets.all(4),
+                        child: pw.Text('Pickup Date'),
+                      ),
+                      pw.Container(
+                        padding: pw.EdgeInsets.all(4),
+                        child: pw.Text('Document Title'),
+                      ),
+                      pw.Container(
+                        padding: pw.EdgeInsets.all(4),
+                        child: pw.Text('Fee'),
+                      ),
+                    ],
+                  ),
+                  // Table Rows
+                  ...requests.map((request) {
+                    return pw.TableRow(
+                      decoration: pw.BoxDecoration(
+                        border: pw.Border.all(), // Adds borders to the row
+                      ),
+                      children: [
+                        pw.Container(
+                          padding: pw.EdgeInsets.all(4),
+                          child: pw.Text(request['date_requested']),
+                        ),
+                        pw.Container(
+                          padding: pw.EdgeInsets.all(4),
+                          child: pw.Text(request['requester_name']),
+                        ),
+                        pw.Container(
+                          padding: pw.EdgeInsets.all(4),
+                          child: pw.Text(request['pickup_date']),
+                        ),
+                        pw.Container(
+                          padding: pw.EdgeInsets.all(4),
+                          child: pw.Text(request['document_title']),
+                        ),
+                        pw.Container(
+                          padding: pw.EdgeInsets.all(4),
+                          child:
+                              pw.Text('${request['fee'].toStringAsFixed(2)}'),
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                  // Total Fee Footer
+                  pw.TableRow(
+                    decoration: pw.BoxDecoration(
+                      border: pw.Border.all(), // Adds borders to the row
+                    ),
+                    children: [
+                      pw.Container(
+                        padding: pw.EdgeInsets.all(4),
+                        child: pw.Text(''),
+                      ),
+                      pw.Container(
+                        padding: pw.EdgeInsets.all(4),
+                        child: pw.Text(''),
+                      ),
+                      pw.Container(
+                        padding: pw.EdgeInsets.all(4),
+                        child: pw.Text(''),
+                      ),
+                      pw.Container(
+                        padding: pw.EdgeInsets.all(4),
+                        child: pw.Text('Total Fee Collected:'),
+                      ),
+                      pw.Container(
+                        padding: pw.EdgeInsets.all(4),
+                        child: pw.Text('${totalFee.toStringAsFixed(2)}'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          );
+        },
+      ),
+    );
+
+    return pdf;
+  }
+
   String _selectedValuePDF = 'Document';
   String _selectedValue = 'Document';
   List<String> months = [
@@ -68,7 +262,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                         right: BorderSide(width: 1.0, color: Colors.grey[300]!),
                       ),
                     ),
-                    height: 400,
+                    height: 600,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -384,6 +578,28 @@ class _AdminDashboardState extends State<AdminDashboard> {
                               }),
                             ),
                           ],
+                        ),
+                        ElevatedButton(
+                          onPressed: () async {
+                            final requests = await fetchApprovedRequests(
+                                selectedYear, selectedMonth);
+                            if (requests.isNotEmpty) {
+                              final pdf = await generatePdf(requests);
+
+                              await Printing.layoutPdf(
+                                onLayout: (format) => pdf.save(),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                      'No approved requests found for the selected period.'),
+                                  duration: Duration(seconds: 2),
+                                ),
+                              );
+                            }
+                          },
+                          child: Text('Generate PDF'),
                         )
                       ],
                     ),
@@ -393,85 +609,85 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   child: Container(
                     padding: EdgeInsets.all(8),
                     height: 400,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.calendar_month),
-                            Text(
-                              'Upcoming Events',
-                              style: GoogleFonts.inter(
-                                  textStyle: TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.w400)),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 16,
-                        ),
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: 3,
-                            itemBuilder: (BuildContext ctx, i) {
-                              return Container(
-                                padding: EdgeInsets.symmetric(vertical: 8),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                      color: Colors.grey[
-                                          300]!, // Customize the color as needed
-                                      width:
-                                          1.0, // Customize the thickness as needed
-                                    ),
-                                  ),
-                                ),
-                                child: SizedBox(
-                                  height: 50,
-                                  child: Row(
-                                    children: [
-                                      Flexible(
-                                        flex: 2,
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 16),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text('May 6, 2024'),
-                                              Text('8:00am - 3:00pm')
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      Flexible(
-                                        flex: 3,
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Title',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 14),
-                                            ),
-                                            Text('Description')
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox()
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        )
-                      ],
-                    ),
+                    //   child: Column(
+                    //     crossAxisAlignment: CrossAxisAlignment.start,
+                    //     children: [
+                    //       Row(
+                    //         children: [
+                    //           Icon(Icons.calendar_month),
+                    //           Text(
+                    //             'Upcoming Events',
+                    //             style: GoogleFonts.inter(
+                    //                 textStyle: TextStyle(
+                    //                     fontSize: 24,
+                    //                     fontWeight: FontWeight.w400)),
+                    //           ),
+                    //         ],
+                    //       ),
+                    //       SizedBox(
+                    //         height: 16,
+                    //       ),
+                    //       Expanded(
+                    //         child: ListView.builder(
+                    //           itemCount: 3,
+                    //           itemBuilder: (BuildContext ctx, i) {
+                    //             return Container(
+                    //               padding: EdgeInsets.symmetric(vertical: 8),
+                    //               decoration: BoxDecoration(
+                    //                 border: Border(
+                    //                   bottom: BorderSide(
+                    //                     color: Colors.grey[
+                    //                         300]!, // Customize the color as needed
+                    //                     width:
+                    //                         1.0, // Customize the thickness as needed
+                    //                   ),
+                    //                 ),
+                    //               ),
+                    //               child: SizedBox(
+                    //                 height: 50,
+                    //                 child: Row(
+                    //                   children: [
+                    //                     Flexible(
+                    //                       flex: 2,
+                    //                       child: Padding(
+                    //                         padding: const EdgeInsets.symmetric(
+                    //                             horizontal: 16),
+                    //                         child: Column(
+                    //                           crossAxisAlignment:
+                    //                               CrossAxisAlignment.start,
+                    //                           children: [
+                    //                             Text('May 6, 2024'),
+                    //                             Text('8:00am - 3:00pm')
+                    //                           ],
+                    //                         ),
+                    //                       ),
+                    //                     ),
+                    //                     Flexible(
+                    //                       flex: 3,
+                    //                       child: Column(
+                    //                         crossAxisAlignment:
+                    //                             CrossAxisAlignment.start,
+                    //                         children: [
+                    //                           Text(
+                    //                             'Title',
+                    //                             style: TextStyle(
+                    //                                 fontWeight: FontWeight.bold,
+                    //                                 fontSize: 14),
+                    //                           ),
+                    //                           Text('Description')
+                    //                         ],
+                    //                       ),
+                    //                     ),
+                    //                     SizedBox()
+                    //                   ],
+                    //                 ),
+                    //               ),
+                    //             );
+                    //           },
+                    //         ),
+                    //       )
+                    //     ],
+                    //   ),
                   ),
                 ),
               ],

@@ -19,6 +19,8 @@ class _VenueRequestsPageState extends State<VenueRequestsPage> {
   FieldLabel venueRequestText = FieldLabel();
   DatabaseService _databaseService = DatabaseService();
   String _sortBy = 'All'; // Default sorting criteria
+  TextEditingController searchValue = TextEditingController();
+  String request = '';
 
   @override
   Widget build(BuildContext context) {
@@ -40,30 +42,30 @@ class _VenueRequestsPageState extends State<VenueRequestsPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: InkWell(
-                        onTap: () {
-                          // addNewItem(context);
-                        },
-                        child: Container(
-                          width: 180,
-                          padding: EdgeInsets.symmetric(horizontal: 8.0),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey.shade300),
-                            borderRadius: BorderRadius.all(Radius.circular(4)),
-                          ),
-                          child: Center(
-                            child: Text(
-                              '+ New Venue Request',
-                              style: GoogleFonts.inter(
-                                  textStyle: TextStyle(
-                                      color: Color(0xff1B2533), fontSize: 14)),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                    // Padding(
+                    //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    //   child: InkWell(
+                    //     onTap: () {
+                    //       // addNewItem(context);
+                    //     },
+                    //     child: Container(
+                    //       width: 180,
+                    //       padding: EdgeInsets.symmetric(horizontal: 8.0),
+                    //       decoration: BoxDecoration(
+                    //         border: Border.all(color: Colors.grey.shade300),
+                    //         borderRadius: BorderRadius.all(Radius.circular(4)),
+                    //       ),
+                    //       child: Center(
+                    //         child: Text(
+                    //           '+ New Venue Request',
+                    //           style: GoogleFonts.inter(
+                    //               textStyle: TextStyle(
+                    //                   color: Color(0xff1B2533), fontSize: 14)),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                     Container(
                       width: 400,
                       height: double.infinity,
@@ -84,7 +86,10 @@ class _VenueRequestsPageState extends State<VenueRequestsPage> {
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 4),
                               child: TextField(
-                                // controller: searchEquipment,
+                                onChanged: (value) {
+                                  print(value);
+                                },
+                                controller: searchValue,
                                 style: GoogleFonts.inter(
                                   textStyle: const TextStyle(
                                     color: Color(0xff202124),
@@ -203,7 +208,24 @@ class _VenueRequestsPageState extends State<VenueRequestsPage> {
               child: StreamBuilder(
                   stream: _databaseService.fetchVenueRequests(),
                   builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+
                     List allVenueRequests = snapshot.data?.docs ?? [];
+
+                    // Filter the list based on the searchValue
+                    if (searchValue.text.isNotEmpty) {
+                      allVenueRequests = allVenueRequests.where((request) {
+                        VenueRequestsModel model = request.data();
+                        return model.requesterName
+                                .toLowerCase()
+                                .contains(searchValue.text.toLowerCase()) ||
+                            model.venueName
+                                .toLowerCase()
+                                .contains(searchValue.text.toLowerCase());
+                      }).toList();
+                    }
 
                     // Sort the list based on the selected criteria
                     if (_sortBy != 'All') {

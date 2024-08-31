@@ -1,10 +1,14 @@
+import 'package:barangay_adittion_hills_app/models/admin/admin.dart';
+import 'package:barangay_adittion_hills_app/models/announcements/announcement.dart';
 import 'package:barangay_adittion_hills_app/models/document/document.dart';
 import 'package:barangay_adittion_hills_app/models/document_requests/document_request.dart';
 import 'package:barangay_adittion_hills_app/models/equipment/new_equipment.dart';
+import 'package:barangay_adittion_hills_app/models/equipment_requests/equipment_requests.dart';
 import 'package:barangay_adittion_hills_app/models/user/user_web.dart';
 import 'package:barangay_adittion_hills_app/models/venue/event_venue.dart';
 import 'package:barangay_adittion_hills_app/models/venue_requests/venue_requests_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 const String DOC_COLLECTION_REF = "documents";
 
@@ -22,8 +26,11 @@ const String VENUE_REQUESTS_REF = 'venue_requests';
 
 const String EQUIPMENT_REQUESTS_REF = 'equipment_requests';
 
+const String ANNOUNCEMENT_REF = 'announcements';
+
 class DatabaseService {
   final _firestore = FirebaseFirestore.instance;
+  late final CollectionReference _announcementCollection;
   late final CollectionReference _equipmentRequests;
   late final CollectionReference _venueRequestCollection;
   late final CollectionReference _docsRef;
@@ -37,12 +44,20 @@ class DatabaseService {
       .doc('app_users')
       .collection('app_users');
   DatabaseService() {
-    _equipmentRequests = _appUser = _firestore
-        .collection(APP_USERS_COLLECTION_REF)
-        .withConverter<UserWeb>(
+    _equipmentRequests = _firestore
+        .collection(EQUIPMENT_REQUESTS_REF)
+        .withConverter<EquipmentRequestsModel>(
             fromFirestore: (snapshots, _) =>
-                UserWeb.fromJson(snapshots.data()!),
-            toFirestore: (userWeb, _) => userWeb.toJson());
+                EquipmentRequestsModel.fromJson(snapshots.data()!),
+            toFirestore: (equipmentRequestsModel, _) =>
+                equipmentRequestsModel.toJson());
+
+    _announcementCollection = _firestore
+        .collection(ANNOUNCEMENT_REF)
+        .withConverter<AnnouncementModel>(
+            fromFirestore: (snapshots, _) =>
+                AnnouncementModel.fromJson(snapshots.data()!),
+            toFirestore: (announcementModel, _) => announcementModel.toJson());
 
     _registeredClient = _firestore
         .collection(REGISTERED_CLIENT_COLLECTION_REF)
@@ -86,16 +101,66 @@ class DatabaseService {
                 DocumentRequest.fromJson(snapshots.data()!),
             toFirestore: (documentRequest, _) => documentRequest.toJson());
   }
-
-  Future<bool> addUsers(UserWeb userWeb, String email) async {
+  Future<bool> addAnnouncement(AnnouncementModel model) async {
     try {
-      await _firestore
-          .collection('users')
-          .doc(userWeb.email)
-          .set(userWeb.toJson());
+      _announcementCollection.add(model);
       return true;
     } catch (e) {
-      print(e.toString());
+      return false;
+    }
+  }
+
+  Stream<QuerySnapshot> getEquipmentRequests() {
+    return _equipmentRequests.snapshots();
+  }
+
+  Future<bool> updateEquipRequests(
+      String id, EquipmentRequestsModel model) async {
+    try {
+      await _equipmentRequests.doc(id).update(model.toJson());
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> deleteEquipReq(String id) async {
+    try {
+      await _equipmentRequests.doc(id).delete();
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> addUsers(AdminModel model, String email) async {
+    try {
+      await _firestore.collection('admin').doc(model.email).set(model.toJson());
+      return true;
+    } catch (e) {
+      debugPrint(e.toString());
+      return false;
+    }
+  }
+
+  Stream<QuerySnapshot> getAnnouncements() {
+    return _announcementCollection.snapshots();
+  }
+
+  Future<bool> updateAnnouncement(String id, AnnouncementModel model) async {
+    try {
+      _announcementCollection.doc(id).update(model.toJson());
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> deleteAnnouncement(String id) async {
+    try {
+      await _announcementCollection.doc(id).delete();
+      return true;
+    } catch (e) {
       return false;
     }
   }

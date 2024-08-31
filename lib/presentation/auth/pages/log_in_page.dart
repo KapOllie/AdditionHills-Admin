@@ -1,9 +1,9 @@
 import 'package:barangay_adittion_hills_app/presentation/auth/pages/signup.dart';
 import 'package:barangay_adittion_hills_app/presentation/auth/utils/firebase_auth_services.dart';
+import 'package:barangay_adittion_hills_app/presentation/auth/utils/signup_validation_utils.dart';
 import 'package:barangay_adittion_hills_app/presentation/auth/widgets/login_field.dart';
 import 'package:barangay_adittion_hills_app/presentation/home/pages/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -16,12 +16,11 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPage();
 }
 
-final _formKey = GlobalKey<FormState>();
-
 class _LoginPage extends State<LoginPage> {
+  final _formKey = GlobalKey<FormState>();
   final FirebaseAuthService _auth = FirebaseAuthService();
   bool _isPasswordVisible =
-      true; // Variable to keep track of password visibility
+      false; // Variable to keep track of password visibility
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -51,6 +50,7 @@ class _LoginPage extends State<LoginPage> {
                   child: Column(
                     children: [
                       LoginField(
+                        validator: (value) => validateEmail(value),
                         controller: _emailController,
                         prefixIcon: const Icon(
                           Icons.email_rounded,
@@ -60,7 +60,8 @@ class _LoginPage extends State<LoginPage> {
                       const SizedBox(height: 24),
                       LoginField(
                         controller: _passwordController,
-                        obscuredText: _isPasswordVisible, obscuringText: '•',
+                        obscuredText: _isPasswordVisible,
+                        obscuringText: '•',
                         iconButton: IconButton(
                             icon: Icon(
                               _isPasswordVisible
@@ -73,8 +74,6 @@ class _LoginPage extends State<LoginPage> {
                                 _isPasswordVisible = !_isPasswordVisible;
                               });
                             }),
-                        // validator: (value) =>
-                        //     validateConfirmPassword(value, _password)
                       ),
                       const SizedBox(height: 24),
                       SizedBox(
@@ -82,7 +81,9 @@ class _LoginPage extends State<LoginPage> {
                         height: 56,
                         child: ElevatedButton(
                           onPressed: () {
-                            _logIn();
+                            if (_formKey.currentState!.validate()) {
+                              _signIn();
+                            }
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xff2294F2),
@@ -140,20 +141,41 @@ class _LoginPage extends State<LoginPage> {
     );
   }
 
-  void _logIn() async {
-    User? user = await _auth.signInWithEmailAndPassword(
-        _emailController.text, _passwordController.text);
+  Future<void> _signIn() async {
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+      // Navigate to home or another page on successful sign-in
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => HomePage(
+                email: _emailController.text,
+              )));
+    } on FirebaseAuthException catch (e) {
+      String errorMessage;
 
-    if (user != null) {
-      const CircularProgressIndicator();
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => HomePage(
-                    email: user.email!,
-                  )));
-    } else {
-      debugPrint("User not found");
+      switch (e.code) {
+        case 'wrong-password':
+          errorMessage = 'Incorrect password. Please try again.';
+          break;
+        case 'user-not-found':
+          errorMessage = 'No user found with this email.';
+          break;
+        case 'invalid-email':
+          errorMessage = 'Invalid email address.';
+          break;
+        default:
+          errorMessage = e.message ?? 'Authentication failed';
+          break;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+        ),
+      );
     }
   }
 }

@@ -3,6 +3,7 @@ import 'package:barangay_adittion_hills_app/common/widgets/field_label/text_fiel
 import 'package:barangay_adittion_hills_app/models/venue/event_venue.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../common/widgets/textfield_validator/textfield_validators.dart';
@@ -207,13 +208,19 @@ newVenueDialogBox(BuildContext context, DatabaseService _databaseService) {
                       child: TextFormField(
                         controller: newEventContact,
                         validator: (value) {
-                          if (value!.isEmpty) {
-                            return "Contact number cannot be empty!";
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a phone number';
+                          }
+                          if (!RegExp(r'^\+639\d{9}$|^09\d{9}$')
+                              .hasMatch(value)) {
+                            return 'Please enter a valid Philippine phone number';
                           }
                           return null;
                         },
                         inputFormatters: [
-                          // LengthLimitingTextInputFormatter(42),
+                          FilteringTextInputFormatter.allow(
+                            RegExp(r'(\+639[0-9]*|09[0-9]*|\d)'),
+                          ),
                         ],
                         cursorColor: const Color(0xff1D1929),
                         style: GoogleFonts.inter(
@@ -858,7 +865,9 @@ newVenueDialogBox(BuildContext context, DatabaseService _databaseService) {
                       children: [
                         Expanded(
                             child: InkWell(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
                           child: Container(
                             height: 40,
                             decoration: BoxDecoration(color: Colors.red),

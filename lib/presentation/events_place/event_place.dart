@@ -75,11 +75,6 @@ class _EventPlacePageState extends State<EventPlacePage> {
                               ),
                               Expanded(
                                 child: ColumnFieldText(
-                                  fieldText: 'Available',
-                                ),
-                              ),
-                              Expanded(
-                                child: ColumnFieldText(
                                   fieldText: 'Price',
                                 ),
                               ),
@@ -165,20 +160,8 @@ class _EventPlacePageState extends State<EventPlacePage> {
                                         ),
                                         Expanded(
                                           child: Text(
+                                            overflow: TextOverflow.clip,
                                             eventVenue.venueAddress,
-                                            textAlign: TextAlign.center,
-                                            style: GoogleFonts.inter(
-                                              textStyle: const TextStyle(
-                                                color: Color(0xff0a0a0a),
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.normal,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Text(
-                                            '0',
                                             textAlign: TextAlign.center,
                                             style: GoogleFonts.inter(
                                               textStyle: const TextStyle(

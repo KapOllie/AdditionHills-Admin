@@ -97,7 +97,9 @@ class _HomePageState extends State<HomePage> {
                   case 3:
                     return const EventPlacePage();
                   case 4:
-                    return const AnnouncementsPage();
+                    return AnnouncementsPage(
+                      email: widget.email,
+                    );
                   case 5:
                     return const DocumentRequestPage();
                   case 6:

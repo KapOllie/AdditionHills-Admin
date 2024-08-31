@@ -21,13 +21,24 @@ class FirebaseAuthService {
       String email, String password) async {
     try {
       UserCredential credential = await _auth.signInWithEmailAndPassword(
-          email: email, password: password);
+        email: email,
+        password: password,
+      );
       return credential.user;
     } on FirebaseAuthException catch (e) {
-      print("Error during sign-in: ${e.message}");
+      // Handle specific FirebaseAuthException errors
+      switch (e.code) {
+        case "wrong-password":
+          throw "The password you entered is incorrect. Please try again.";
+        // Add more cases here to handle other specific FirebaseAuthException errors
+        default:
+          // Re-throw the exception if it's not one of the specific cases handled above
+          throw e;
+      }
     } catch (e) {
       print("An unknown error occurred: $e");
+      // Optionally, you could throw here too if you want to surface non-Firebase errors
+      throw e;
     }
-    return null;
   }
 }

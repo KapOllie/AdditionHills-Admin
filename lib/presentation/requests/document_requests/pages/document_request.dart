@@ -45,27 +45,27 @@ class _DocumentRequestPageState extends State<DocumentRequestPage> {
                             fontSize: 24,
                             fontWeight: FontWeight.w600)),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: InkWell(
-                      onTap: () {},
-                      child: Container(
-                        width: 200,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Color(0xff017EF3),
-                        ),
-                        child: Center(
-                          child: Text(
-                            '+ New Document Request',
-                            style: GoogleFonts.inter(
-                                textStyle: TextStyle(
-                                    color: Colors.white, fontSize: 14)),
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
+                  // Padding(
+                  //   padding: const EdgeInsets.symmetric(horizontal: 16),
+                  //   child: InkWell(
+                  //     onTap: () {},
+                  //     child: Container(
+                  //       width: 200,
+                  //       height: 40,
+                  //       decoration: BoxDecoration(
+                  //         color: Color(0xff017EF3),
+                  //       ),
+                  //       child: Center(
+                  //         child: Text(
+                  //           '+ New Document Request',
+                  //           style: GoogleFonts.inter(
+                  //               textStyle: TextStyle(
+                  //                   color: Colors.white, fontSize: 14)),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // )
                 ],
               ),
             ),
@@ -228,8 +228,9 @@ class _DocumentRequestPageState extends State<DocumentRequestPage> {
                                                 IconButton(
                                                     onPressed: () {
                                                       if (documentRequest
-                                                              .request_status ==
-                                                          'Pending') {
+                                                          .request_status
+                                                          .contains(
+                                                              'Pending')) {
                                                         // Show a Snackbar if the document status is pending
                                                         ScaffoldMessenger.of(
                                                                 context)
@@ -445,7 +446,7 @@ class _DocumentRequestPageState extends State<DocumentRequestPage> {
           style: GoogleFonts.inter(textStyle: const TextStyle(fontSize: 14)),
         ),
         Text(
-          'Fee: ${docRequest.fee}',
+          'Fee: ${docRequest.fee == 0 ? 'Free' : docRequest.fee.toString()}',
           style: GoogleFonts.inter(textStyle: const TextStyle(fontSize: 14)),
         ),
         Text(
