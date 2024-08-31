@@ -21,6 +21,15 @@ class _EventEquipmentRequestsPageState
   FieldLabel equipmentRequestText = FieldLabel();
   String _sortBy = 'All';
   String request = '';
+  @override
+  void initState() {
+    super.initState();
+    searchEquip.addListener(() {
+      setState(() {
+        request = searchEquip.text.toLowerCase();
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

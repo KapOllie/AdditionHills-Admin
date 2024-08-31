@@ -21,6 +21,15 @@ class _VenueRequestsPageState extends State<VenueRequestsPage> {
   String _sortBy = 'All'; // Default sorting criteria
   TextEditingController searchValue = TextEditingController();
   String request = '';
+  @override
+  void initState() {
+    super.initState();
+    searchValue.addListener(() {
+      setState(() {
+        request = searchValue.text.toLowerCase();
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

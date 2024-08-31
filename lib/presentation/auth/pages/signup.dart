@@ -407,7 +407,7 @@ class _SignupPageState extends State<SignupPage> {
                                           EdgeInsets.only(bottom: 0, right: 16),
                                       child: SignupTextField(
                                         controller: _phoneNumber,
-                                        prefixText: '(+639)',
+                                        prefixText: '(+63)',
                                         inputFormatter: [
                                           FilteringTextInputFormatter.allow(
                                               RegExp(r'[0-9,+]')),
